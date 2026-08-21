@@ -1,1 +1,62 @@
-{# passive_hub/index.html — TODO: implement. #}
+{% extends "layouts/base_light.html" %}
+
+{% block title %}Passive Hub - Chakravyu{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">Indian Cyber Safety Resource Hub</h1>
+        <p class="lead text-muted">Stay informed, stay secure. Access vital resources to protect yourself online.</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="bi bi-flag display-4 text-primary mb-3"></i>
+                    <h5 class="card-title">Reporting Guide</h5>
+                    <p class="card-text text-muted">Step-by-step instructions on how to report cybercrimes in India.</p>
+                    <a href="{{ url_for('passive_hub.reporting_guide') }}" class="btn btn-outline-primary w-100 mt-2">View Guide</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="bi bi-telephone display-4 text-danger mb-3"></i>
+                    <h5 class="card-title">Emergency Helplines</h5>
+                    <p class="card-text text-muted">Directory of crucial contact numbers for immediate cyber assistance.</p>
+                    <a href="{{ url_for('passive_hub.helplines') }}" class="btn btn-outline-danger w-100 mt-2">View Helplines</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="bi bi-newspaper display-4 text-warning mb-3"></i>
+                    <h5 class="card-title">Threat Feed</h5>
+                    <p class="card-text text-muted">Latest cyber threat summaries and warnings relevant to Indian users.</p>
+                    <a href="{{ url_for('passive_hub.threat_feed') }}" class="btn btn-outline-warning w-100 mt-2">View Threats</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="bi bi-book display-4 text-success mb-3"></i>
+                    <h5 class="card-title">Legal Reference</h5>
+                    <p class="card-text text-muted">Simplified overview of the IT Act 2000 and your digital rights.</p>
+                    <a href="{{ url_for('passive_hub.legal_reference') }}" class="btn btn-outline-success w-100 mt-2">View Reference</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mt-5 p-4 bg-light rounded">
+        <p class="mb-0 fw-bold">In case of a cyber emergency, immediately call <span class="text-danger fs-4">1930</span> or visit <a href="https://cybercrime.gov.in" target="_blank">cybercrime.gov.in</a></p>
+    </div>
+</div>
+{% endblock %}

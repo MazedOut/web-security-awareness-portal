@@ -1,1 +1,49 @@
-{# admin/manage_questions.html — TODO: implement. #}
+{% extends "layouts/base_light.html" %}
+
+{% block title %}Manage Questions - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Manage Questions</h2>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle-fill me-2"></i> Full CRUD functionality for questions is to be implemented by the admin team.
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Module</th>
+                            <th>Tier</th>
+                            <th>Prompt</th>
+                            <th>Diff.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for question in questions %}
+                        <tr>
+                            <td>{{ question.id }}</td>
+                            <td><span class="badge bg-primary">{{ question.module }}</span></td>
+                            <td>{{ question.tier }}</td>
+                            <td>{{ question.prompt[:80] }}{% if question.prompt|length > 80 %}...{% endif %}</td>
+                            <td>{{ question.difficulty }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center py-3 text-muted">No questions found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

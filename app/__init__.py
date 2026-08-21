@@ -6,13 +6,16 @@ Initializes Flask extensions (SQLAlchemy, Migrate, LoginManager),
 registers all blueprints, and returns the configured app instance.
 """
 
+import os
+
 from flask import Flask
+from dotenv import load_dotenv
 
 from app.extensions import db, migrate, login_manager
 from config import config_by_name
 
 
-def create_app(config_name="development"):
+def create_app(config_name=None):
     """
     Application factory.
 
@@ -22,6 +25,12 @@ def create_app(config_name="development"):
     Returns:
         Flask: configured Flask application instance.
     """
+    # Load .env file
+    load_dotenv()
+
+    if config_name is None:
+        config_name = os.environ.get("FLASK_ENV", "development")
+
     app = Flask(__name__)
     app.config.from_object(config_by_name[config_name])
 
@@ -30,8 +39,22 @@ def create_app(config_name="development"):
     migrate.init_app(app, db)
     login_manager.init_app(app)
 
+    # User loader for Flask-Login
+    @login_manager.user_loader
+    def load_user(user_id):
+        from app.models.user import User
+        return db.session.get(User, int(user_id))
+
+    # Import models so Alembic can see them
+    with app.app_context():
+        from app import models  # noqa: F401
+
     # Register blueprints
     register_blueprints(app)
+
+    # Register CLI commands
+    from seed import register_seed_command
+    register_seed_command(app)
 
     return app
 

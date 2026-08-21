@@ -1,1 +1,54 @@
-{# owasp_labs/idor_lab.html — TODO: implement. #}
+{% extends "layouts/base_dark.html" %}
+
+{% block title %}IDOR Lab{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-unlock-fill text-info"></i> Insecure Direct Object Reference (IDOR)</h2>
+    
+    <div class="alert alert-dark border-info">
+        <strong>Simulated URL:</strong> <code>https://chakravyu.local/owasp-labs/idor?user_id={{ current_id }}</code>
+    </div>
+
+    <div class="mb-4">
+        <p>Switch User ID:</p>
+        <div class="btn-group">
+            {% for i in range(1, 6) %}
+            <a href="?user_id={{ i }}" class="btn btn-outline-info {% if current_id == i|string %}active{% endif %}">{{ i }}</a>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if profile %}
+    <div class="card card-terminal mb-4" style="max-width: 400px;">
+        <div class="card-header bg-dark border-secondary">
+            User Profile
+        </div>
+        <div class="card-body">
+            <p><strong>ID:</strong> {{ profile.id }}</p>
+            <p><strong>Name:</strong> {{ profile.name }}</p>
+            <p><strong>Email:</strong> {{ profile.email }}</p>
+            <p><strong>Role:</strong> <span class="badge bg-secondary">{{ profile.role }}</span></p>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-warning">User profile not found.</div>
+    {% endif %}
+
+    <div class="card card-terminal mt-4">
+        <div class="card-header bg-dark border-secondary">
+            Hints & Education
+        </div>
+        <div class="card-body">
+            <h5>What is IDOR?</h5>
+            <p>Insecure Direct Object Reference occurs when an application provides direct access to objects based on user-supplied input without proper authorization checks. In this lab, changing the <code>user_id</code> parameter in the URL allows you to view profiles of other users, including an Admin.</p>
+            
+            <h5>How to prevent this:</h5>
+            <ul>
+                <li>Implement robust access control checks to ensure the currently logged-in user is authorized to access the requested resource.</li>
+                <li>Use unguessable indirect references (like UUIDs) instead of sequential integers for identifiers, though this is secondary to proper access control.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

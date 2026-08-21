@@ -1,1 +1,59 @@
-{# auth/register.html — TODO: implement. #}
+{% extends "layouts/base_light.html" %}
+
+{% block title %}Register - Chakravyu{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header bg-success text-white text-center py-4">
+                    <h3 class="mb-0"><i class="bi bi-person-plus-fill me-2"></i>Create an Account</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('auth.register') }}">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                            <label for="username"><i class="bi bi-person me-2"></i>Username</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
+                            <label for="email"><i class="bi bi-envelope me-2"></i>Email address</label>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3 mb-md-0">
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                                    <label for="password"><i class="bi bi-lock me-2"></i>Password</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+                                    <label for="confirm_password"><i class="bi bi-lock-fill me-2"></i>Confirm Password</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-floating mb-4">
+                            <select class="form-select" id="tier" name="tier" aria-label="Select Tier">
+                                <option value="1">Tier 1 - Passive Hub (Beginner)</option>
+                                <option value="2">Tier 2 - Gamified Training (Intermediate)</option>
+                                <option value="3">Tier 3 - SOC Analyst (Advanced)</option>
+                            </select>
+                            <label for="tier"><i class="bi bi-layers me-2"></i>Select Experience Tier</label>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">Register</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center py-3">
+                    <div class="small">
+                        Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

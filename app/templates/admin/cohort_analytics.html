@@ -1,1 +1,67 @@
-{# admin/cohort_analytics.html — TODO: implement. #}
+{% extends "layouts/base_light.html" %}
+
+{% block title %}Cohort Analytics - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Cohort Analytics</h2>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">User Tier Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% for tier, count in tiers.items() %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ tier }}
+                            <span class="badge bg-primary rounded-pill">{{ count }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Average Scores per Module</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Module</th>
+                                    <th class="text-end">Avg Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for module, avg in avg_scores.items() %}
+                                <tr>
+                                    <td>{{ module }}</td>
+                                    <td class="text-end fw-bold">{{ avg }}</td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="2" class="text-center text-muted py-3">No scores recorded yet.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-muted small">
+                    Total Completions: {{ total_completions }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

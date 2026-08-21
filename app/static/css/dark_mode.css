@@ -1,1 +1,365 @@
-/* dark_mode.css — Tier 3 SOC Analyst terminal theme. TODO: implement. */
+/*
+ * dark_mode.css — Tier 3 SOC Analyst terminal/forensic theme
+ *
+ * Creates a cyberpunk terminal aesthetic with:
+ * - Dark backgrounds with subtle scanline overlay
+ * - Green/cyan neon accents (#00ff41, #22d3ee)
+ * - Monospace fonts (JetBrains Mono, Fira Code)
+ * - Glowing borders and text effects
+ * - Terminal-style cards and log viewers
+ */
+
+/* ===== Base ===== */
+.chakravyu-dark {
+    background-color: #0a0e17;
+    color: #c9d1d9;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Scanline overlay effect */
+.scanline-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 255, 65, 0.015) 0px,
+        rgba(0, 255, 65, 0.015) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+}
+
+/* ===== Typography ===== */
+.chakravyu-dark h1, .chakravyu-dark h2, .chakravyu-dark h3,
+.chakravyu-dark h4, .chakravyu-dark h5, .chakravyu-dark h6 {
+    font-family: 'JetBrains Mono', monospace;
+    color: #e6edf3;
+}
+
+.text-terminal { color: #00ff41 !important; }
+.text-cyber { color: #22d3ee !important; }
+.text-warning-cyber { color: #f59e0b !important; }
+.text-danger-cyber { color: #ef4444 !important; }
+
+/* ===== Cards — Terminal Style ===== */
+.card-terminal {
+    background: #111827;
+    border: 1px solid #1e3a2f;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.card-terminal:hover {
+    border-color: #00ff41;
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.1);
+}
+
+.card-terminal .card-header {
+    background: #0d1117;
+    border-bottom: 1px solid #1e3a2f;
+    color: #00ff41;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+}
+
+.card-terminal .card-header::before {
+    content: "● ● ● ";
+    color: #00ff41;
+    margin-right: 0.5rem;
+    font-size: 0.7rem;
+}
+
+.card-terminal .card-body {
+    background: #111827;
+    color: #c9d1d9;
+    padding: 1.25rem;
+}
+
+/* ===== Log Viewer ===== */
+.log-viewer {
+    background: #0d1117;
+    border: 1px solid #1e3a2f;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.log-entry {
+    padding: 0.4rem 0.8rem;
+    border-bottom: 1px solid rgba(30, 58, 47, 0.3);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.log-entry:hover {
+    background: rgba(0, 255, 65, 0.05);
+}
+
+.log-entry.suspicious {
+    border-left: 3px solid #ef4444;
+}
+
+.log-entry.selected {
+    background: rgba(0, 255, 65, 0.1);
+    border-left: 3px solid #00ff41;
+}
+
+.log-entry .timestamp {
+    color: #6b7280;
+    min-width: 160px;
+    flex-shrink: 0;
+}
+
+.log-entry .source {
+    color: #22d3ee;
+    min-width: 120px;
+    flex-shrink: 0;
+}
+
+.log-entry .severity-high { color: #ef4444; }
+.log-entry .severity-medium { color: #f59e0b; }
+.log-entry .severity-low { color: #22d3ee; }
+.log-entry .severity-info { color: #6b7280; }
+
+/* ===== Buttons — Terminal ===== */
+.btn-terminal {
+    background: transparent;
+    border: 1px solid #00ff41;
+    color: #00ff41;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    padding: 0.4rem 1rem;
+    transition: all 0.2s;
+}
+
+.btn-terminal:hover {
+    background: #00ff41;
+    color: #0a0e17;
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+}
+
+.btn-terminal-danger {
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+.btn-terminal-danger:hover {
+    background: #ef4444;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
+
+.btn-terminal-cyan {
+    border-color: #22d3ee;
+    color: #22d3ee;
+}
+
+.btn-terminal-cyan:hover {
+    background: #22d3ee;
+    color: #0a0e17;
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+}
+
+/* ===== Forms — Terminal ===== */
+.form-control-terminal {
+    background: #0d1117;
+    border: 1px solid #1e3a2f;
+    color: #00ff41;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    border-radius: 4px;
+}
+
+.form-control-terminal:focus {
+    background: #0d1117;
+    border-color: #00ff41;
+    color: #00ff41;
+    box-shadow: 0 0 0 0.15rem rgba(0, 255, 65, 0.15);
+}
+
+.form-control-terminal::placeholder {
+    color: #374151;
+}
+
+/* ===== Tables — Terminal ===== */
+.table-terminal {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: #c9d1d9;
+}
+
+.table-terminal thead th {
+    background: #0d1117;
+    border-bottom: 2px solid #00ff41;
+    color: #00ff41;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+}
+
+.table-terminal td {
+    border-color: rgba(30, 58, 47, 0.3);
+    vertical-align: middle;
+}
+
+.table-terminal tbody tr:hover {
+    background: rgba(0, 255, 65, 0.05);
+}
+
+/* ===== Badges — Terminal ===== */
+.badge-terminal {
+    background: rgba(0, 255, 65, 0.15);
+    color: #00ff41;
+    border: 1px solid rgba(0, 255, 65, 0.3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 400;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+}
+
+.badge-danger-terminal {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.badge-cyan-terminal {
+    background: rgba(34, 211, 238, 0.15);
+    color: #22d3ee;
+    border-color: rgba(34, 211, 238, 0.3);
+}
+
+.badge-warning-terminal {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+/* ===== MITRE ATT&CK Cards ===== */
+.mitre-card {
+    background: #111827;
+    border: 1px solid #1e3a2f;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    transition: border-color 0.2s;
+}
+
+.mitre-card:hover {
+    border-color: #22d3ee;
+}
+
+.mitre-tactic-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    background: rgba(34, 211, 238, 0.1);
+    color: #22d3ee;
+    border: 1px solid rgba(34, 211, 238, 0.3);
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+}
+
+/* ===== Progress/Step Indicators ===== */
+.ir-step {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+}
+
+.ir-step-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: 2px solid #374151;
+    color: #6b7280;
+    flex-shrink: 0;
+}
+
+.ir-step-number.active {
+    border-color: #00ff41;
+    color: #00ff41;
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+}
+
+.ir-step-number.completed {
+    background: #00ff41;
+    border-color: #00ff41;
+    color: #0a0e17;
+}
+
+/* ===== Alerts — Terminal ===== */
+.alert-terminal {
+    background: #111827;
+    border: 1px solid #1e3a2f;
+    color: #c9d1d9;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    border-radius: 4px;
+}
+
+.alert-terminal-success {
+    border-left: 3px solid #00ff41;
+}
+
+.alert-terminal-danger {
+    border-left: 3px solid #ef4444;
+}
+
+.alert-terminal-info {
+    border-left: 3px solid #22d3ee;
+}
+
+/* ===== Scrollbar — Custom ===== */
+.chakravyu-dark ::-webkit-scrollbar { width: 6px; }
+.chakravyu-dark ::-webkit-scrollbar-track { background: #0a0e17; }
+.chakravyu-dark ::-webkit-scrollbar-thumb { background: #1e3a2f; border-radius: 3px; }
+.chakravyu-dark ::-webkit-scrollbar-thumb:hover { background: #00ff41; }
+
+/* ===== Animations ===== */
+@keyframes terminalBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.cursor-blink::after {
+    content: "▌";
+    color: #00ff41;
+    animation: terminalBlink 1s step-end infinite;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .log-entry { font-size: 0.7rem; flex-wrap: wrap; }
+    .log-entry .timestamp { min-width: 100%; font-size: 0.65rem; }
+    .log-entry .source { min-width: auto; }
+}

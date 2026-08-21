@@ -2,7 +2,9 @@
 app/blueprints/passive_hub/routes.py
 Route definitions for the "passive_hub" blueprint.
 
-This blueprint serves the Passive Awareness & Indian Cyber Resource Hub: reporting directory, helplines, threat feed, and legal reference.
+This blueprint serves the Passive Awareness & Indian Cyber Resource Hub:
+reporting directory, helplines, threat feed, and legal reference.
+All pages are publicly accessible (no login required).
 """
 
 from flask import Blueprint, render_template
@@ -12,35 +14,29 @@ passive_hub_bp = Blueprint("passive_hub", __name__, template_folder="../../templ
 
 @passive_hub_bp.route("/")
 def index():
-    """
-    TODO: Implement the index view for the passive_hub blueprint.
-    """
-    pass
+    """Hub index with cards linking to all sub-sections."""
+    return render_template("index.html")
 
-@passive_hub_bp.route("/reporting_guide")
+
+@passive_hub_bp.route("/reporting-guide")
 def reporting_guide():
-    """
-    TODO: Implement the reporting guide view for the passive_hub blueprint.
-    """
-    pass
+    """Step-by-step cybercrime.gov.in walkthrough."""
+    return render_template("reporting_guide.html")
+
 
 @passive_hub_bp.route("/helplines")
 def helplines():
-    """
-    TODO: Implement the helplines view for the passive_hub blueprint.
-    """
-    pass
+    """Emergency helpline directory."""
+    return render_template("helplines.html")
 
-@passive_hub_bp.route("/threat_feed")
+
+@passive_hub_bp.route("/threat-feed")
 def threat_feed():
-    """
-    TODO: Implement the threat feed view for the passive_hub blueprint.
-    """
-    pass
+    """Indian cyber threat summaries and CERT-In advisories."""
+    return render_template("threat_feed.html")
 
-@passive_hub_bp.route("/legal_reference")
+
+@passive_hub_bp.route("/legal-reference")
 def legal_reference():
-    """
-    TODO: Implement the legal reference view for the passive_hub blueprint.
-    """
-    pass
+    """IT Act 2000 simplified reference and digital rights."""
+    return render_template("legal_reference.html")

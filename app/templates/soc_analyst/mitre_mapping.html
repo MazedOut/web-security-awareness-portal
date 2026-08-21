@@ -1,1 +1,75 @@
-{# soc_analyst/mitre_mapping.html — TODO: implement. #}
+{% extends "layouts/base_dark.html" %}
+
+{% block title %}MITRE ATT&CK Mapping{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-shield-lock text-info"></i> MITRE ATT&CK Mapping</h2>
+    
+    {% if not results %}
+    <p>Read each attack scenario and map it to the correct MITRE ATT&CK Tactic.</p>
+    
+    <form method="POST">
+        <div class="row">
+            {% for scenario in scenarios %}
+            <div class="col-md-6 mb-4">
+                <div class="card card-terminal mitre-card h-100">
+                    <div class="card-header bg-dark border-secondary">
+                        Scenario #{{ scenario.id }}
+                    </div>
+                    <div class="card-body">
+                        <p>{{ scenario.description }}</p>
+                        <select name="tactic_{{ scenario.id }}" class="form-select form-control-terminal mt-3" required>
+                            <option value="">Select Tactic...</option>
+                            {% for tactic in tactics %}
+                            <option value="{{ tactic }}">{{ tactic }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-terminal mt-3">Submit Mapping</button>
+    </form>
+    
+    {% else %}
+    
+    <div class="card card-terminal mb-4">
+        <div class="card-header bg-dark border-secondary">
+            Results
+        </div>
+        <div class="card-body">
+            <h4>Score: {{ results.score }} / {{ results.total }}</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for detail in results.details %}
+        <div class="col-md-6 mb-4">
+            <div class="card card-terminal h-100 border-{% if detail.correct %}success{% else %}danger{% endif %}">
+                <div class="card-header bg-dark border-secondary">
+                    Scenario #{{ detail.scenario.id }} - 
+                    {% if detail.correct %}
+                    <span class="text-success"><i class="bi bi-check-circle"></i> Correct</span>
+                    {% else %}
+                    <span class="text-danger"><i class="bi bi-x-circle"></i> Incorrect</span>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <p>{{ detail.scenario.description }}</p>
+                    <hr class="border-secondary">
+                    <p><strong>Your Answer:</strong> {{ detail.selected }}</p>
+                    <p><strong>Correct Answer:</strong> {{ detail.scenario.tactic }}</p>
+                    <p class="text-info"><small>{{ detail.scenario.explanation }}</small></p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <a href="{{ url_for('soc_analyst.mitre') }}" class="btn btn-terminal mt-3">Try Again</a>
+    
+    {% endif %}
+</div>
+{% endblock %}

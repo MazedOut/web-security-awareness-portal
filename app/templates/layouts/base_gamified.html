@@ -1,6 +1,158 @@
-{#
-    layouts/base_gamified.html
-    Gamified UI base layout with progress rings, used for Tier 2
-    (Cyber Defender) pages.
-    TODO: add <head>, navbar, footer, and {% block content %}.
-#}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Chakravyu — Cyber Defender{% endblock %}</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        .navbar {
+            background: rgba(15, 12, 41, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid #7c3aed;
+        }
+        .navbar-brand { font-weight: 700; color: #a78bfa !important; }
+        .card {
+            background: rgba(30, 30, 60, 0.8);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            border-radius: 16px;
+            backdrop-filter: blur(5px);
+            color: #e0e0e0;
+        }
+        .card:hover { border-color: rgba(124, 58, 237, 0.6); box-shadow: 0 0 20px rgba(124, 58, 237, 0.15); }
+        .btn-primary { background: linear-gradient(135deg, #7c3aed, #6d28d9); border: none; border-radius: 10px; }
+        .btn-primary:hover { background: linear-gradient(135deg, #6d28d9, #5b21b6); }
+        .xp-display {
+            background: linear-gradient(135deg, #7c3aed, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+        .progress { background-color: rgba(124, 58, 237, 0.2); border-radius: 10px; }
+        .progress-bar { background: linear-gradient(90deg, #7c3aed, #ec4899); border-radius: 10px; }
+        .badge-tier { background: linear-gradient(135deg, #7c3aed, #6d28d9); color: #fff; font-weight: 500; }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('dashboard.index') }}">
+                <i class="bi bi-shield-shaded"></i> CHAKRAVYU
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navGamified">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navGamified">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard.index') }}">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('phishing.inbox') }}">
+                            <i class="bi bi-envelope-exclamation"></i> Phishing Lab
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-controller"></i> Labs
+                        </a>
+                        <ul class="dropdown-menu" style="background: #1a1a3e; border-color: #7c3aed;">
+                            <li><a class="dropdown-item text-light" href="{{ url_for('owasp_labs.sql_injection_lab') }}">SQL Injection</a></li>
+                            <li><a class="dropdown-item text-light" href="{{ url_for('owasp_labs.xss_lab') }}">XSS</a></li>
+                            <li><a class="dropdown-item text-light" href="{{ url_for('owasp_labs.idor_lab') }}">IDOR</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('passive_hub.index') }}">
+                            <i class="bi bi-info-circle"></i> Resources
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard.leaderboard') }}">
+                            <i class="bi bi-trophy"></i> Leaderboard
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <span class="nav-link">
+                            <span class="xp-display"><i class="bi bi-lightning-charge-fill"></i> {{ current_user.xp }} XP</span>
+                            <span class="badge badge-tier ms-2">Lv.{{ current_user.level }}</span>
+                        </span>
+                    </li>
+                    {% if current_user.is_admin %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.dashboard') }}"><i class="bi bi-gear"></i></a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                            <i class="bi bi-box-arrow-right"></i>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary btn-sm ms-2 mt-1" href="{{ url_for('auth.register') }}">Sign Up</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' if category == 'error' else 'info' }} alert-dismissible fade show" role="alert" style="background: rgba(30,30,60,0.8); border-color: #7c3aed; color: #e0e0e0;">
+            {{ message }}
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="container py-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-5 py-4 text-center" style="border-top: 1px solid rgba(124,58,237,0.3);">
+        <div class="container small text-secondary">
+            <p class="mb-1"><i class="bi bi-shield-shaded"></i> Chakravyu — Level up your cyber awareness</p>
+            <p class="mb-0">Tier 2: Cyber Defender Mode</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

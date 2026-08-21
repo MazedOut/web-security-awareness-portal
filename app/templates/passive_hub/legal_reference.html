@@ -1,1 +1,165 @@
-{# passive_hub/legal_reference.html — TODO: implement. #}
+{% extends "layouts/base_light.html" %}
+
+{% block title %}Legal Reference - Chakravyu{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-5">
+        <h2 class="fw-bold">Legal Reference: IT Act 2000</h2>
+        <p class="lead text-muted">A simplified overview of key sections in the Indian Information Technology Act, 2000 regarding cybercrimes.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <h4 class="mb-3">Key Sections & Punishments</h4>
+            <div class="accordion shadow-sm" id="itActAccordion">
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="sec43">
+                        <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#col43" aria-expanded="true" aria-controls="col43">
+                            Section 43: Damage to Computer Systems
+                        </button>
+                    </h2>
+                    <div id="col43" class="accordion-collapse collapse show" aria-labelledby="sec43" data-bs-parent="#itActAccordion">
+                        <div class="accordion-body">
+                            <strong>Offence:</strong> Accessing, downloading data, introducing viruses, or damaging a computer system or network without the owner's permission.<br>
+                            <strong>Penalty:</strong> Compensation up to Rs. 1 Crore to the affected person.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="sec66">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#col66" aria-expanded="false" aria-controls="col66">
+                            Section 66: Computer-related Offences
+                        </button>
+                    </h2>
+                    <div id="col66" class="accordion-collapse collapse" aria-labelledby="sec66" data-bs-parent="#itActAccordion">
+                        <div class="accordion-body">
+                            <strong>Offence:</strong> Doing any act referred to in Section 43 dishonestly or fraudulently (e.g., hacking).<br>
+                            <strong>Penalty:</strong> Imprisonment up to 3 years or fine up to Rs. 5 Lakh, or both.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="sec66B">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#col66B" aria-expanded="false" aria-controls="col66B">
+                            Section 66B: Receiving Stolen Computer Resource
+                        </button>
+                    </h2>
+                    <div id="col66B" class="accordion-collapse collapse" aria-labelledby="sec66B" data-bs-parent="#itActAccordion">
+                        <div class="accordion-body">
+                            <strong>Offence:</strong> Dishonestly receiving or retaining any stolen computer resource or communication device.<br>
+                            <strong>Penalty:</strong> Imprisonment up to 3 years or fine up to Rs. 1 Lakh, or both.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="sec66C">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#col66C" aria-expanded="false" aria-controls="col66C">
+                            Section 66C: Identity Theft
+                        </button>
+                    </h2>
+                    <div id="col66C" class="accordion-collapse collapse" aria-labelledby="sec66C" data-bs-parent="#itActAccordion">
+                        <div class="accordion-body">
+                            <strong>Offence:</strong> Fraudulently or dishonestly making use of the electronic signature, password, or any other unique identification feature of any other person.<br>
+                            <strong>Penalty:</strong> Imprisonment up to 3 years and fine up to Rs. 1 Lakh.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="sec66D">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#col66D" aria-expanded="false" aria-controls="col66D">
+                            Section 66D: Cheating by Personation
+                        </button>
+                    </h2>
+                    <div id="col66D" class="accordion-collapse collapse" aria-labelledby="sec66D" data-bs-parent="#itActAccordion">
+                        <div class="accordion-body">
+                            <strong>Offence:</strong> Cheating by impersonating someone else using a computer resource or a communication device (e.g., phishing).<br>
+                            <strong>Penalty:</strong> Imprisonment up to 3 years and fine up to Rs. 1 Lakh.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="sec66E">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#col66E" aria-expanded="false" aria-controls="col66E">
+                            Section 66E: Violation of Privacy
+                        </button>
+                    </h2>
+                    <div id="col66E" class="accordion-collapse collapse" aria-labelledby="sec66E" data-bs-parent="#itActAccordion">
+                        <div class="accordion-body">
+                            <strong>Offence:</strong> Intentionally capturing, publishing, or transmitting the image of a private area of any person without their consent.<br>
+                            <strong>Penalty:</strong> Imprisonment up to 3 years or fine up to Rs. 2 Lakh, or both.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="sec67">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#col67" aria-expanded="false" aria-controls="col67">
+                            Section 67: Publishing Obscene Material
+                        </button>
+                    </h2>
+                    <div id="col67" class="accordion-collapse collapse" aria-labelledby="sec67" data-bs-parent="#itActAccordion">
+                        <div class="accordion-body">
+                            <strong>Offence:</strong> Publishing or transmitting obscene material in electronic form.<br>
+                            <strong>Penalty:</strong> First conviction: Imprisonment up to 3 years and fine up to Rs. 5 Lakh. Second conviction: Imprisonment up to 5 years and fine up to Rs. 10 Lakh.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="sec72">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#col72" aria-expanded="false" aria-controls="col72">
+                            Section 72: Breach of Confidentiality
+                        </button>
+                    </h2>
+                    <div id="col72" class="accordion-collapse collapse" aria-labelledby="sec72" data-bs-parent="#itActAccordion">
+                        <div class="accordion-body">
+                            <strong>Offence:</strong> Securing access to electronic records, books, or registers without consent and disclosing such information to any other person.<br>
+                            <strong>Penalty:</strong> Imprisonment up to 2 years or fine up to Rs. 1 Lakh, or both.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="sec43A">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#col43A" aria-expanded="false" aria-controls="col43A">
+                            Section 43A: Failure to Protect Data
+                        </button>
+                    </h2>
+                    <div id="col43A" class="accordion-collapse collapse" aria-labelledby="sec43A" data-bs-parent="#itActAccordion">
+                        <div class="accordion-body">
+                            <strong>Offence:</strong> Corporate body possessing sensitive personal data fails to implement reasonable security practices, causing wrongful loss or gain.<br>
+                            <strong>Penalty:</strong> Liable to pay damages by way of compensation to the affected person.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm bg-light">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Your Digital Rights</h4>
+                    <p>Under the IT Act and Indian laws, you have specific rights in the digital realm:</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item bg-transparent"><i class="bi bi-shield-check text-success me-2"></i><strong>Right to Privacy:</strong> Recognized as a fundamental right. Protection against unauthorized access to your data.</li>
+                        <li class="list-group-item bg-transparent"><i class="bi bi-shield-check text-success me-2"></i><strong>Right to Compensation:</strong> Under Section 43A, if a company loses your sensitive data due to poor security, you can seek compensation.</li>
+                        <li class="list-group-item bg-transparent"><i class="bi bi-shield-check text-success me-2"></i><strong>Protection against Cyber Stalking:</strong> Covered under IPC Section 354D, providing protection to women against digital monitoring and stalking.</li>
+                        <li class="list-group-item bg-transparent"><i class="bi bi-shield-check text-success me-2"></i><strong>Legal Recognition of E-Docs:</strong> Digital signatures and electronic contracts hold legal validity.</li>
+                    </ul>
+                    <div class="mt-4 small text-muted">
+                        <em>Disclaimer: This page is for informational purposes only and does not constitute legal advice. Please consult a legal professional for specific cases.</em>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

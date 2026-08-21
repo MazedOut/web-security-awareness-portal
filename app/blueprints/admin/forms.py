@@ -1,6 +1,5 @@
 """
-app/blueprints/admin/forms.py
-WTForms (or manual validation) form classes used by the "admin" blueprint.
-
-TODO: Define form classes as needed (e.g., using Flask-WTF).
+Forms for the Admin blueprint.
+Forms can be defined here using Flask-WTF if needed in the future.
+For now, simple HTML forms are used.
 """

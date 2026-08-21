@@ -1,1 +1,165 @@
-{# passive_hub/threat_feed.html — TODO: implement. #}
+{% extends "layouts/base_light.html" %}
+
+{% block title %}Threat Feed - Chakravyu{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-5">
+        <h2 class="fw-bold">Indian Cyber Threat Feed</h2>
+        <p class="lead text-muted">Latest trending cyber scams and threats targeting Indian users.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Threat 1 -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0 border-start border-danger border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title mb-0 fw-bold">FedEx/Courier Fraud</h5>
+                        <span class="badge bg-danger">Critical</span>
+                    </div>
+                    <p class="text-muted small mb-2"><i class="bi bi-calendar3 me-1"></i> Ongoing</p>
+                    <p><strong>How it works:</strong> Victims receive a fake call claiming to be from FedEx or Customs stating a parcel in their name has been intercepted with illegal drugs. The caller transfers them to fake "police" who extort money via Skype/WhatsApp video calls under the guise of verifying bank accounts.</p>
+                    <p class="mb-0 text-success small"><strong>Prevention:</strong> Disconnect the call immediately. Law enforcement never asks for money transfers for "verification" or conducts official business via WhatsApp/Skype.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Threat 2 -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0 border-start border-danger border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title mb-0 fw-bold">Sextortion via Video Call</h5>
+                        <span class="badge bg-danger">Critical</span>
+                    </div>
+                    <p class="text-muted small mb-2"><i class="bi bi-calendar3 me-1"></i> Ongoing</p>
+                    <p><strong>How it works:</strong> Victim accepts a WhatsApp video call from an unknown number. The screen shows a nude video, and the caller secretly records the victim's face alongside it. They then blackmail the victim, threatening to share the morphed video with friends and family.</p>
+                    <p class="mb-0 text-success small"><strong>Prevention:</strong> Never answer video calls from unknown numbers. If you do and see something suspicious, cover the camera immediately and disconnect.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Threat 3 -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0 border-start border-warning border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title mb-0 fw-bold">OTP Forwarding Scam</h5>
+                        <span class="badge bg-warning text-dark">High</span>
+                    </div>
+                    <p class="text-muted small mb-2"><i class="bi bi-calendar3 me-1"></i> Recent</p>
+                    <p><strong>How it works:</strong> Scammer calls pretending to be from a telecom operator offering 5G upgrades. They ask the victim to dial a specific USSD code (like *401*number#). This enables call forwarding, allowing the scammer to intercept OTP calls to bypass 2FA.</p>
+                    <p class="mb-0 text-success small"><strong>Prevention:</strong> Never dial numbers or USSD codes provided by unknown callers. Telecom companies do not ask you to dial codes for upgrades.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Threat 4 -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0 border-start border-warning border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title mb-0 fw-bold">UPI Collect Request Fraud</h5>
+                        <span class="badge bg-warning text-dark">High</span>
+                    </div>
+                    <p class="text-muted small mb-2"><i class="bi bi-calendar3 me-1"></i> Persistent</p>
+                    <p><strong>How it works:</strong> While selling items on platforms like OLX, the "buyer" says they will send money via UPI. Instead, they send a UPI "Collect Request". The victim enters their UPI PIN thinking they are receiving money, but the amount is actually deducted from their account.</p>
+                    <p class="mb-0 text-success small"><strong>Prevention:</strong> Remember: UPI PIN is ONLY required for SENDING money, never for receiving money.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Threat 5 -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0 border-start border-warning border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title mb-0 fw-bold">Job Offer / Task Fraud</h5>
+                        <span class="badge bg-warning text-dark">High</span>
+                    </div>
+                    <p class="text-muted small mb-2"><i class="bi bi-calendar3 me-1"></i> Trending</p>
+                    <p><strong>How it works:</strong> Victims get messages offering part-time work (e.g., liking YouTube videos). They earn small initial amounts, gaining trust. They are then asked to "invest" in prepaid tasks for higher returns, eventually losing large sums when the scammers disappear.</p>
+                    <p class="mb-0 text-success small"><strong>Prevention:</strong> Genuine employers never ask you to pay or "invest" money to do a job.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Threat 6 -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0 border-start border-warning border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title mb-0 fw-bold">KYC Expiry Phishing</h5>
+                        <span class="badge bg-warning text-dark">High</span>
+                    </div>
+                    <p class="text-muted small mb-2"><i class="bi bi-calendar3 me-1"></i> Persistent</p>
+                    <p><strong>How it works:</strong> Fake SMS claiming your Bank/PAN/SIM KYC has expired and services will be blocked in 24 hours. Contains a malicious link to a fake portal to harvest net banking credentials and OTPs.</p>
+                    <p class="mb-0 text-success small"><strong>Prevention:</strong> Never click links in panic SMS. Verify with your bank directly using official apps or websites.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Threat 7 -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0 border-start border-info border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title mb-0 fw-bold">WhatsApp .zip Malware</h5>
+                        <span class="badge bg-info text-dark">Medium</span>
+                    </div>
+                    <p class="text-muted small mb-2"><i class="bi bi-calendar3 me-1"></i> Emerging</p>
+                    <p><strong>How it works:</strong> Malicious APKs disguised as document .zip files or app updates (like "Pink WhatsApp") are circulated in WhatsApp groups. Installing them compromises the phone, allowing hackers to read SMS and steal credentials.</p>
+                    <p class="mb-0 text-success small"><strong>Prevention:</strong> Only install apps from the official Google Play Store or Apple App Store. Do not install APKs from WhatsApp.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Threat 8 -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0 border-start border-info border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title mb-0 fw-bold">Aadhaar/PAN Identity Theft</h5>
+                        <span class="badge bg-info text-dark">Medium</span>
+                    </div>
+                    <p class="text-muted small mb-2"><i class="bi bi-calendar3 me-1"></i> Ongoing</p>
+                    <p><strong>How it works:</strong> Scammers use leaked Aadhaar or PAN details to open fake bank accounts, take out loans, or procure SIM cards under the victim's name.</p>
+                    <p class="mb-0 text-success small"><strong>Prevention:</strong> Use the mAadhaar app to lock your biometrics. Regularly check your CIBIL score for unknown loans. Use masked Aadhaar where full Aadhaar is not mandatory.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Threat 9 -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0 border-start border-info border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title mb-0 fw-bold">QR Code Payment Scam</h5>
+                        <span class="badge bg-info text-dark">Medium</span>
+                    </div>
+                    <p class="text-muted small mb-2"><i class="bi bi-calendar3 me-1"></i> Persistent</p>
+                    <p><strong>How it works:</strong> Fraudster sends a QR code via WhatsApp to a seller, claiming scanning it will deposit money into their account. Scanning it actually deducts money.</p>
+                    <p class="mb-0 text-success small"><strong>Prevention:</strong> Scanning a QR code ALWAYS deducts money from your account. You do not need to scan a QR code to receive money.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Threat 10 -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0 border-start border-secondary border-4 bg-light">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title mb-0 fw-bold">CERT-In Advisory: Critical Vulnerabilities</h5>
+                        <span class="badge bg-secondary">Advisory</span>
+                    </div>
+                    <p class="text-muted small mb-2"><i class="bi bi-calendar3 me-1"></i> Weekly Update</p>
+                    <p><strong>Summary:</strong> CERT-In regularly issues advisories regarding critical vulnerabilities in popular software (Chrome, Android, Windows, Cisco products).</p>
+                    <p class="mb-0 text-success small"><strong>Prevention:</strong> Keep your OS, browsers, and all applications updated to the latest versions automatically to patch these vulnerabilities.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

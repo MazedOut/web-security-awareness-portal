@@ -1,1 +1,72 @@
-{# soc_analyst/incident_response_game.html — TODO: implement. #}
+{% extends "layouts/base_dark.html" %}
+
+{% block title %}Incident Response Game{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-shield-shaded text-danger"></i> Incident Response Simulator</h2>
+    
+    {% if completed %}
+    <div class="card card-terminal text-center p-5">
+        <h3 class="text-success mb-4">Incident Resolved</h3>
+        <h1>Final Score: {{ score }}</h1>
+        <p class="mt-3">You have completed the scenario.</p>
+        <a href="{{ url_for('soc_analyst.incident_response') }}" class="btn btn-terminal mt-3">Play Another Scenario</a>
+    </div>
+    
+    {% elif scenario %}
+    
+    <div class="mb-4">
+        <h4>{{ scenario.title }}</h4>
+        <div class="progress mt-3" style="height: 20px; background-color: #222;">
+            {% set pct = (step / scenario.steps|length) * 100 %}
+            <div class="progress-bar bg-info" role="progressbar" style="width: {{ pct }}%;" aria-valuenow="{{ pct }}" aria-valuemin="0" aria-valuemax="100">Step {{ step + 1 }} of {{ scenario.steps|length }}</div>
+        </div>
+    </div>
+    
+    <div class="card card-terminal">
+        <div class="card-header bg-dark border-secondary">
+            Phase: {{ scenario.steps[step].title }}
+        </div>
+        <div class="card-body">
+            <p class="lead mb-4">{{ scenario.steps[step].narrative }}</p>
+            
+            <form method="POST">
+                <input type="hidden" name="scenario_id" value="{{ scenario.id }}">
+                <input type="hidden" name="step" value="{{ step }}">
+                
+                <div class="d-grid gap-3">
+                    {% for choice in scenario.steps[step].choices %}
+                    <button type="submit" name="choice" value="{{ loop.index0 }}" class="btn btn-outline-info text-start p-3">
+                        <i class="bi bi-chevron-right"></i> {{ choice.text }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% else %}
+    
+    <p>Select a scenario to begin your shift as an Incident Responder.</p>
+    <div class="row">
+        {% for s in scenarios %}
+        <div class="col-md-4 mb-4">
+            <div class="card card-terminal h-100">
+                <div class="card-header bg-dark border-secondary">
+                    {{ s.title }}
+                </div>
+                <div class="card-body">
+                    <p>{{ s.description }}</p>
+                </div>
+                <div class="card-footer bg-dark border-secondary">
+                    <a href="{{ url_for('soc_analyst.incident_response', scenario_id=s.id, step=0) }}" class="btn btn-terminal w-100">Start Scenario</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% endif %}
+</div>
+{% endblock %}

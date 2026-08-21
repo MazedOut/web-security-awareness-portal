@@ -1,1 +1,95 @@
-{# passive_hub/helplines.html — TODO: implement. #}
+{% extends "layouts/base_light.html" %}
+
+{% block title %}Emergency Helplines - Chakravyu{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Cyber Emergency Helplines</h2>
+        <p class="lead text-muted">Immediate contacts for cyber security incidents and fraud reporting in India.</p>
+    </div>
+
+    <div class="alert alert-danger shadow-sm text-center mb-5">
+        <h4 class="alert-heading"><i class="bi bi-exclamation-triangle-fill"></i> The Golden Hour</h4>
+        <p class="mb-0">In case of financial fraud, report within the <strong>golden hour (first 2-3 hours)</strong> to maximize chances of recovering your money. Call 1930 immediately.</p>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-danger shadow-sm">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-telephone-inbound display-3 text-danger mb-3"></i>
+                    <h3 class="fw-bold text-danger">1930</h3>
+                    <h5 class="card-title">National Cybercrime Helpline</h5>
+                    <p class="card-text text-muted small">24x7 primary number for immediate financial cyber fraud reporting.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-primary shadow-sm">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-telephone display-3 text-primary mb-3"></i>
+                    <h3 class="fw-bold text-primary">112</h3>
+                    <h5 class="card-title">National Emergency Number</h5>
+                    <p class="card-text text-muted small">For immediate police assistance across India.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-info shadow-sm">
+                <div class="card-body text-center py-4">
+                    <i class="bi bi-telephone-fill display-3 text-info mb-3"></i>
+                    <h3 class="fw-bold text-info">181</h3>
+                    <h5 class="card-title">Women Helpline</h5>
+                    <p class="card-text text-muted small">For reporting cyber harassment and abuse against women.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mb-4">Other Important Contacts</h3>
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-globe me-2 text-primary"></i>Online Reporting Portal</h5>
+                    <p class="mb-1 fw-bold"><a href="https://cybercrime.gov.in" target="_blank" class="text-decoration-none">cybercrime.gov.in</a></p>
+                    <p class="text-muted small">Official portal by Ministry of Home Affairs.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-shield-lock me-2 text-primary"></i>CERT-In</h5>
+                    <p class="mb-1 fw-bold"><a href="mailto:incident@cert-in.org.in" class="text-decoration-none">incident@cert-in.org.in</a></p>
+                    <p class="text-muted small">Report national level cybersecurity incidents.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-bank me-2 text-primary"></i>RBI Sachet Portal</h5>
+                    <p class="mb-1 fw-bold"><a href="https://sachet.rbi.org.in" target="_blank" class="text-decoration-none">sachet.rbi.org.in</a></p>
+                    <p class="text-muted small">For banking fraud and unauthorized entities.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-building me-2 text-primary"></i>I4C</h5>
+                    <p class="mb-1 fw-bold">14461</p>
+                    <p class="text-muted small">Indian Cyber Crime Coordination Centre.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

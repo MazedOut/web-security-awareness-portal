@@ -1,1 +1,72 @@
-{# owasp_labs/xss_lab.html — TODO: implement. #}
+{% extends "layouts/base_dark.html" %}
+
+{% block title %}Cross-Site Scripting (XSS) Lab{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-code-slash text-warning"></i> Cross-Site Scripting (XSS) Lab</h2>
+    
+    <div class="card card-terminal mb-4">
+        <div class="card-header bg-dark border-secondary">
+            Leave a Comment
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Your Comment (Try HTML/JS)</label>
+                    <textarea name="comment" class="form-control form-control-terminal" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-terminal">Post Comment</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card card-terminal h-100">
+                <div class="card-header bg-danger text-white">
+                    Vulnerable App (Unescaped)
+                </div>
+                <div class="card-body">
+                    {% for comment in comments %}
+                        <div class="border border-secondary p-2 mb-2 bg-dark">
+                            <iframe sandbox="allow-scripts" srcdoc="{{ comment }}" style="border: none; width: 100%; height: 50px;"></iframe>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card card-terminal h-100">
+                <div class="card-header bg-success text-white">
+                    Secure App (Escaped)
+                </div>
+                <div class="card-body">
+                    {% for comment in comments %}
+                        <div class="border border-secondary p-2 mb-2 bg-dark">
+                            {{ comment }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-terminal mt-4">
+        <div class="card-header bg-dark border-secondary">
+            Hints & Education
+        </div>
+        <div class="card-body">
+            <h5>What is XSS?</h5>
+            <p>Cross-Site Scripting (XSS) allows attackers to inject malicious client-side scripts into web pages viewed by other users. This happens when the application includes untrusted data in a web page without proper validation or escaping.</p>
+            
+            <h5>Try These Payloads:</h5>
+            <ul>
+                <li><code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code></li>
+                <li><code>&lt;img src=x onerror=alert('XSS')&gt;</code></li>
+                <li><code>&lt;h1 style="color:red"&gt;HTML Injection&lt;/h1&gt;</code></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

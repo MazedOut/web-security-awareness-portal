@@ -1,1 +1,98 @@
-{# admin/dashboard.html — TODO: implement. #}
+{% extends "layouts/base_light.html" %}
+
+{% block title %}Admin Dashboard - Chakravyu{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Admin Dashboard</h2>
+        <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline-secondary">Back to User Dashboard</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-primary border-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase fw-bold">Total Users</h6>
+                    <h2 class="display-5 fw-bold text-primary">{{ total_users }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-success border-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase fw-bold">Total Scores/Completions</h6>
+                    <h2 class="display-5 fw-bold text-success">{{ total_scores }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-warning border-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase fw-bold">Phishing Templates</h6>
+                    <h2 class="display-5 fw-bold text-warning">{{ total_phishing }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-danger border-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase fw-bold">Incident Scenarios</h6>
+                    <h2 class="display-5 fw-bold text-danger">{{ total_scenarios }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mb-4">Management Modules</h3>
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-question-circle me-2"></i> Manage Questions</h5>
+                    <p class="card-text text-muted">View and manage question bank for all tiers and modules.</p>
+                    <a href="{{ url_for('admin.manage_questions') }}" class="btn btn-primary">Go to Questions</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-envelope me-2"></i> Manage Phishing Templates</h5>
+                    <p class="card-text text-muted">Add, edit, or delete phishing email examples for Tier 1.</p>
+                    <a href="{{ url_for('admin.manage_phishing_templates') }}" class="btn btn-primary">Go to Phishing Templates</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-shield-exclamation me-2"></i> Manage Scenarios</h5>
+                    <p class="card-text text-muted">Manage incident response scenarios for Tier 3 SOC analysts.</p>
+                    <a href="{{ url_for('admin.manage_scenarios') }}" class="btn btn-primary">Go to Scenarios</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-graph-up me-2"></i> Cohort Analytics</h5>
+                    <p class="card-text text-muted">View aggregated analytics, average scores, and tier distribution.</p>
+                    <a href="{{ url_for('admin.cohort_analytics') }}" class="btn btn-primary">Go to Analytics</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

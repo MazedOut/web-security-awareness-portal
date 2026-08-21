@@ -1,1 +1,84 @@
-{# partials/question_card.html — reusable HTMX-swappable partial. TODO: implement. #}
+{# partials/question_card.html — reusable HTMX-swappable quiz question partial.
+
+   Expected context variables:
+   - question: Question model instance
+   - show_result: bool (True to show answer feedback)
+   - user_answer: str (the user's selected answer, if show_result)
+   - is_correct: bool (if show_result)
+   - feedback: str (AI mentor feedback text, if show_result)
+
+   Usage in templates:
+   {% include "partials/question_card.html" %}
+#}
+
+<div class="card card-terminal mb-3 fade-in-up" id="question-{{ question.id }}">
+    <div class="card-header">
+        <span class="float-end">
+            <span class="badge-terminal">Tier {{ question.tier }}</span>
+            <span class="badge-terminal ms-1">{{ question.module | upper }}</span>
+        </span>
+        Question #{{ question.id }}
+    </div>
+    <div class="card-body">
+        <p class="mb-3" style="font-size: 0.95rem;">{{ question.prompt }}</p>
+
+        {% if not show_result %}
+        {# Show answer choices as radio buttons #}
+        <form method="POST" action="{{ url_for('api.ai_mentor_feedback') }}"
+              hx-post="{{ url_for('api.ai_mentor_feedback') }}"
+              hx-target="#question-{{ question.id }}"
+              hx-swap="outerHTML">
+            <input type="hidden" name="question_id" value="{{ question.id }}">
+            <input type="hidden" name="question_text" value="{{ question.prompt }}">
+
+            <div class="mb-3">
+                {% for choice in question.choices_list %}
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="radio" name="user_answer"
+                           id="choice-{{ question.id }}-{{ loop.index }}"
+                           value="{{ choice }}" required>
+                    <label class="form-check-label" for="choice-{{ question.id }}-{{ loop.index }}">
+                        {{ choice }}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="btn btn-terminal btn-sm">
+                <i class="bi bi-check-circle"></i> Submit Answer
+            </button>
+        </form>
+
+        {% else %}
+        {# Show result feedback #}
+        <div class="mb-3">
+            {% if is_correct %}
+            <div class="alert alert-terminal alert-terminal-success py-2">
+                <i class="bi bi-check-circle-fill text-terminal"></i>
+                <strong>Correct!</strong> You selected: {{ user_answer }}
+            </div>
+            {% else %}
+            <div class="alert alert-terminal alert-terminal-danger py-2">
+                <i class="bi bi-x-circle-fill text-danger-cyber"></i>
+                <strong>Incorrect.</strong> You selected: {{ user_answer }}<br>
+                <span class="text-muted small">Correct answer: {{ question.correct_answer }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if question.explanation %}
+        <div class="mb-3">
+            <strong class="text-cyber small">📖 Explanation:</strong>
+            <p class="small text-muted mt-1">{{ question.explanation }}</p>
+        </div>
+        {% endif %}
+
+        {% if feedback %}
+        <div class="mb-2">
+            <strong class="text-terminal small">🤖 AI Mentor:</strong>
+            <p class="small mt-1" style="color: #9ca3af;">{{ feedback }}</p>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+</div>

@@ -1,1 +1,130 @@
-{# passive_hub/reporting_guide.html — TODO: implement. #}
+{% extends "layouts/base_light.html" %}
+
+{% block title %}Reporting Guide - Chakravyu{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-4">
+        <h2 class="fw-bold">How to Report Cybercrime in India</h2>
+        <p class="lead text-muted">Follow these steps to file a complaint on the National Cyber Crime Reporting Portal.</p>
+    </div>
+    
+    <div class="alert alert-warning mb-4">
+        <strong>Important:</strong> File your complaint within 24-48 hours. The sooner you report, the higher the chances of recovery or action. Always keep digital evidence intact.
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="accordion" id="reportingGuideAccordion">
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Step 1: Visit cybercrime.gov.in
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#reportingGuideAccordion">
+                        <div class="accordion-body">
+                            Open your web browser and navigate to the official portal: <a href="https://cybercrime.gov.in" target="_blank">cybercrime.gov.in</a>. Ensure the URL is exactly correct to avoid phishing sites.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Step 2: Click 'Report Cyber Crime'
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#reportingGuideAccordion">
+                        <div class="accordion-body">
+                            On the homepage, locate and click the "Report Cyber Crime" button, or "Report Women/Child Related Crime" if applicable. Read the terms and accept them to proceed.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            Step 3: Choose Category & Register
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#reportingGuideAccordion">
+                        <div class="accordion-body">
+                            Register using your mobile number and state. You will receive an OTP. Once logged in, select the appropriate category such as Financial Fraud, Women/Child, or Other Cybercrime.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFour">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            Step 4: Fill in Incident Details
+                        </button>
+                    </h2>
+                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#reportingGuideAccordion">
+                        <div class="accordion-body">
+                            Provide accurate details of the incident: date, time, platform where it occurred, and a detailed description of what happened. Be clear and concise.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFive">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            Step 5: Upload Evidence
+                        </button>
+                    </h2>
+                    <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#reportingGuideAccordion">
+                        <div class="accordion-body">
+                            Upload relevant evidence. This includes screenshots of chats, emails, malicious URLs, bank statements showing unauthorized transactions, transaction IDs, or any other digital footprint left by the attacker.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingSix">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                            Step 6: Submit and Save Number
+                        </button>
+                    </h2>
+                    <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#reportingGuideAccordion">
+                        <div class="accordion-body">
+                            Review your complaint and submit it. You will receive an acknowledgment number on your registered mobile number and email. Save this number securely.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingSeven">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                            Step 7: Track Status & File FIR
+                        </button>
+                    </h2>
+                    <div id="collapseSeven" class="accordion-collapse collapse" aria-labelledby="headingSeven" data-bs-parent="#reportingGuideAccordion">
+                        <div class="accordion-body">
+                            Use the acknowledgment number to track the status of your complaint on the portal. For severe cases, it is highly recommended to also visit your local police station to file an official FIR (First Information Report) referencing your online complaint.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="card shadow-sm border-0 bg-light">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Checklist for Evidence</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Bank/wallet transaction IDs</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Screenshots of emails/SMS</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> URLs of fraudulent websites</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Headers of phishing emails</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Contact numbers of the fraudster</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

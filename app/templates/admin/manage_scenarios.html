@@ -1,1 +1,112 @@
-{# admin/manage_scenarios.html — TODO: implement. #}
+{% extends "layouts/base_light.html" %}
+
+{% block title %}Manage Scenarios - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Manage Incident Scenarios</h2>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="card shadow-sm mb-5">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Add New Scenario</h5>
+            <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#addScenarioForm" aria-expanded="false" aria-controls="addScenarioForm">
+                Toggle Form
+            </button>
+        </div>
+        <div class="collapse" id="addScenarioForm">
+            <div class="card-body bg-light">
+                <form action="{{ url_for('admin.add_scenario') }}" method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label">Title</label>
+                            <input type="text" name="title" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Scenario Type</label>
+                            <input type="text" name="scenario_type" class="form-control" placeholder="e.g. Malware, Phishing" required>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Steps (JSON Array of strings)</label>
+                            <textarea name="steps" class="form-control" rows="3" placeholder='["Isolate the host", "Identify the payload"]' required></textarea>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">MITRE Tactics (Comma-separated)</label>
+                            <input type="text" name="mitre_tactics" class="form-control" placeholder="Initial Access, Execution, Defense Evasion" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Difficulty (1-3)</label>
+                            <input type="number" name="difficulty" class="form-control" min="1" max="3" value="2" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">XP Reward</label>
+                            <input type="number" name="xp_reward" class="form-control" value="50" required>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-end">
+                        <button type="submit" class="btn btn-success">Save Scenario</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Type</th>
+                            <th>Diff.</th>
+                            <th>XP</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for scenario in scenarios %}
+                        <tr>
+                            <td>{{ scenario.id }}</td>
+                            <td>{{ scenario.title }}</td>
+                            <td><span class="badge bg-secondary">{{ scenario.scenario_type }}</span></td>
+                            <td>{{ scenario.difficulty }}</td>
+                            <td>{{ scenario.xp_reward }}</td>
+                            <td class="text-end">
+                                <form action="{{ url_for('admin.delete_scenario', id=scenario.id) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this scenario?');">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-3 text-muted">No scenarios found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,1 +1,68 @@
-{# owasp_labs/sql_injection_lab.html — TODO: implement. #}
+{% extends "layouts/base_dark.html" %}
+
+{% block title %}SQL Injection Lab{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-database-exclamation text-danger"></i> SQL Injection Lab</h2>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card card-terminal h-100">
+                <div class="card-header bg-dark border-secondary">
+                    Vulnerable Login Form
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" name="username" class="form-control form-control-terminal" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" name="password" class="form-control form-control-terminal" required>
+                        </div>
+                        <button type="submit" class="btn btn-terminal w-100">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card card-terminal h-100">
+                <div class="card-header bg-dark border-secondary">
+                    Backend Query Visualization
+                </div>
+                <div class="card-body bg-black text-success font-monospace" style="min-height: 150px;">
+                    {% if query_string %}
+                        <p class="mb-1 text-secondary">-- Constructed Query:</p>
+                        <p>{{ query_string }}</p>
+                    {% else %}
+                        <p class="text-secondary">Submit the form to see the query constructed here...</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if result_message %}
+    <div class="alert {% if is_vulnerable %}alert-danger{% else %}alert-success{% endif %}">
+        {{ result_message }}
+    </div>
+    {% endif %}
+
+    <div class="card card-terminal mt-4">
+        <div class="card-header bg-dark border-secondary">
+            Hints & Education
+        </div>
+        <div class="card-body">
+            <h5>How SQLi Works</h5>
+            <p>SQL Injection occurs when user input is improperly sanitized and concatenated directly into a database query. Attackers can manipulate the input to alter the query's logic.</p>
+            
+            <h5>Try These Payloads:</h5>
+            <ul>
+                <li><code>' OR 1=1 --</code> (Bypasses authentication by making the WHERE clause true)</li>
+                <li><code>admin' --</code> (Logs in as admin by commenting out the rest of the query)</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

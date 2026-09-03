@@ -24,7 +24,7 @@ import { ChakravyuhLogo } from '../common/ChakravyuhLogo';
 
 export const Navbar = () => {
   const { lang, toggleLanguage, t } = useLanguage();
-  const { user, getRankTitle } = useAuth();
+  const { user, isAuthenticated, getRankTitle } = useAuth();
   const { fontSize, setFontSize, soundEnabled, setSoundEnabled } = useAccessibility();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -94,7 +94,7 @@ export const Navbar = () => {
         <div className="max-w-7xl mx-auto glass-panel rounded-2xl px-4 py-2.5 flex items-center justify-between">
           
           {/* Brand Logo */}
-          <Link to="/" className="flex items-center space-x-3 group">
+          <Link to={isAuthenticated ? "/landing" : "/"} className="flex items-center space-x-3 group">
             <div className="relative flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-cyber-gold-light to-cyber-gold/20 border border-cyber-gold/30 group-hover:border-cyber-gold transition-all duration-300 shadow-sm">
               <ChakravyuhLogo className="w-7 h-7 text-cyber-gold group-hover:scale-110 transition-transform duration-300" glow={false} />
             </div>

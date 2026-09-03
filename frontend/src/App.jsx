@@ -73,7 +73,8 @@ function AppContent() {
         <main className="flex-1">
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
-              <Route path="/" element={<PageTransition><LandingPage /></PageTransition>} />
+              <Route path="/" element={<PageTransition><AuthPage /></PageTransition>} />
+              <Route path="/landing" element={<PageTransition><LandingPage /></PageTransition>} />
               <Route path="/dashboard" element={<PageTransition><DashboardPage /></PageTransition>} />
               <Route path="/articles" element={<PageTransition><AwarenessHubPage /></PageTransition>} />
               <Route path="/articles/:id" element={<PageTransition><ArticleDetailPage /></PageTransition>} />

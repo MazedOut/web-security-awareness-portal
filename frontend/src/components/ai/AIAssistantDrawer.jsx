@@ -17,6 +17,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { aiService } from '../../services/aiService';
 import { AnimatedButton } from '../common/AnimatedButton';
 import { Badge } from '../common/Badge';
+import { FormattedText } from '../common/FormattedText';
 
 export const AIAssistantDrawer = ({ isFullscreen = false }) => {
   const { lang, t } = useLanguage();
@@ -146,8 +147,8 @@ export const AIAssistantDrawer = ({ isFullscreen = false }) => {
                     : 'bg-gradient-to-r from-cyber-blue-light to-cyber-blue text-white font-medium rounded-tr-sm border border-cyber-blue/20'
                 }`}
               >
-                <div className="whitespace-pre-line font-sans">
-                  {msg.text}
+                <div className="font-sans">
+                  <FormattedText text={msg.text} />
                 </div>
                 <div className={`text-[10px] mt-1.5 font-medium ${isAi ? 'text-slate-400 text-right' : 'text-blue-100 text-right'}`}>
                   {msg.timestamp}

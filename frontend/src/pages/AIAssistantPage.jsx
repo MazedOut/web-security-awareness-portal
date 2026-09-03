@@ -45,9 +45,11 @@ export const AIAssistantPage = () => {
               <h4 className="font-bold text-sm text-red-700">Emergency Hotline: 1930</h4>
             </div>
             <p className="text-xs text-red-600/80 leading-relaxed font-medium">
-              {lang === 'hi'
-                ? 'यदि आपके खाते से अनाधिकृत पैसे कट गए हैं, तो AI से पूछने के साथ-साथ तुरंत **1930** पर कॉल करें ताकि बैंक लेनदेन रोका जा सके।'
-                : 'If you have experienced unauthorized financial debits within the last 2 hours, call **1930 immediately** to trigger bank fund freezes.'}
+              {lang === 'hi' ? (
+                <>यदि आपके खाते से अनाधिकृत पैसे कट गए हैं, तो AI से पूछने के साथ-साथ तुरंत <strong>1930</strong> पर कॉल करें ताकि बैंक लेनदेन रोका जा सके।</>
+              ) : (
+                <>If you have experienced unauthorized financial debits within the last 2 hours, call <strong>1930 immediately</strong> to trigger bank fund freezes.</>
+              )}
             </p>
             <a
               href="tel:1930"

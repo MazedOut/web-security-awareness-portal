@@ -219,9 +219,11 @@ export const DashboardPage = () => {
               </h4>
             </div>
             <p className="text-xs text-slate-700 leading-relaxed font-medium">
-              {lang === 'hi'
-                ? '🛑 **याद रखें:** कोई भी बैंक या सरकारी अधिकारी कभी भी आपसे फोन पर **OTP**, **ATM PIN** या **CVV** नहीं मांगता। यदि कोई तत्काल पैसे न भेजने पर गिरफ्तारी की धमकी दे, तो तुरंत कॉल काटें और 1930 पर रिपोर्ट करें।'
-                : '🛑 **Golden Rule:** Legitimate banks and government officials NEVER demand your OTP, PIN, or CVV over the phone. If a caller threatens immediate arrest or cancellation of electricity unless money is transferred, disconnect and dial 1930.'}
+              {lang === 'hi' ? (
+                <>🛑 <strong>याद रखें:</strong> कोई भी बैंक या सरकारी अधिकारी कभी भी आपसे फोन पर <strong>OTP</strong>, <strong>ATM PIN</strong> या <strong>CVV</strong> नहीं मांगता। यदि कोई तत्काल पैसे न भेजने पर गिरफ्तारी की धमकी दे, तो तुरंत कॉल काटें और 1930 पर रिपोर्ट करें।</>
+              ) : (
+                <>🛑 <strong>Golden Rule:</strong> Legitimate banks and government officials NEVER demand your OTP, PIN, or CVV over the phone. If a caller threatens immediate arrest or cancellation of electricity unless money is transferred, disconnect and dial 1930.</>
+              )}
             </p>
           </GlassCard>
 

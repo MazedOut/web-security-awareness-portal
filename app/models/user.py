@@ -79,5 +79,10 @@ class User(UserMixin, db.Model):
         while self.xp >= self.xp_for_next_level:
             self.level += 1
 
+    @property
+    def total_points(self):
+        """Alias for xp — satisfies Data Dictionary 6.3.1 'total_points' field name (Item 31)."""
+        return self.xp
+
     def __repr__(self):
         return f"<User {self.username} (Tier {self.tier})>"

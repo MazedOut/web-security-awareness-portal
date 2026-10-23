@@ -54,6 +54,16 @@
             </div>
         </div>
     </div>
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-secondary border-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase fw-bold">Quiz Questions</h6>
+                    <h2 class="display-5 fw-bold text-secondary">{{ total_questions }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <h3 class="mb-4">Management Modules</h3>
     <div class="row g-4">
@@ -90,6 +100,15 @@
                     <h5 class="card-title"><i class="bi bi-graph-up me-2"></i> Cohort Analytics</h5>
                     <p class="card-text text-muted">View aggregated analytics, average scores, and tier distribution.</p>
                     <a href="{{ url_for('admin.cohort_analytics') }}" class="btn btn-primary">Go to Analytics</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-people-fill me-2"></i> Manage Users</h5>
+                    <p class="card-text text-muted">View all registered users, scores, XP, and reset individual scores.</p>
+                    <a href="{{ url_for('admin.manage_users') }}" class="btn btn-primary">Go to Users</a>
                 </div>
             </div>
         </div>

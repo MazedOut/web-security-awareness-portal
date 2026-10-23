@@ -1,11 +1,39 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from app.extensions import db
+from app.models.user import User
 from app.models.score import Score
 from app.services.gemini_service import get_ai_feedback
 from app.services.hibp_service import check_password_breach
 
 api_bp = Blueprint('api', __name__, template_folder='../../templates/api')
+
+
+# ---------------------------------------------------------------------------
+# Public Leaderboard  (FR-03.2, Item 33)
+# ---------------------------------------------------------------------------
+
+@api_bp.route('/leaderboard', methods=['GET'])
+def leaderboard():
+    """Return top-10 users by XP. Publicly accessible (no login required)."""
+    top_users = (
+        User.query
+        .order_by(User.xp.desc())
+        .limit(10)
+        .all()
+    )
+    data = [
+        {
+            'rank': idx + 1,
+            'name': u.username,
+            'xp': u.xp,
+            'level': u.level,
+            'tier': u.tier,
+            'badge': u.tier_name,
+        }
+        for idx, u in enumerate(top_users)
+    ]
+    return jsonify({'leaderboard': data})
 
 @api_bp.route('/ai-mentor-feedback', methods=['POST'])
 def ai_mentor_feedback():

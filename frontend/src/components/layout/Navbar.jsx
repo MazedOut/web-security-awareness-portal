@@ -81,6 +81,11 @@ export const Navbar = () => {
       isLink: true
     },
     {
+      name: '🏆 Leaderboard',
+      path: '/leaderboard',
+      isLink: true
+    },
+    {
       name: 'Profile',
       path: '/profile',
       isLink: true

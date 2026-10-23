@@ -1,0 +1,231 @@
+CHAKRAVYUH — PROJECT STRUCTURE
+===============================================================================
+Root Directory: web-security-awareness-portal/
+A dual-architecture cybersecurity awareness web portal featuring a Flask backend (with Jinja2 templates, SQLite, SQLAlchemy, Flask-Login, and Gemini AI) and a modern React 19 + Vite frontend (with TailwindCSS and Framer Motion).
+===============================================================================
+
+web-security-awareness-portal/
+│
+├── .env.example                                  # Template for environment variables (DATABASE_URL, SECRET_KEY, GEMINI_API_KEY, HIBP_API_KEY)
+├── .gitignore                                     # Git ignore rules (ignores .env, instance, *.pyc, *.db)
+├── README.md                                      # Comprehensive project documentation, architecture diagrams, and run commands
+├── config.py                                      # Central Flask configuration classes (DevelopmentConfig, TestingConfig, ProductionConfig)
+├── run.py                                         # Application entry point for starting the Flask server (port 5000)
+├── requirements.txt                               # Python dependencies (Flask, Flask-SQLAlchemy, Flask-Login, Flask-Migrate, etc.)
+├── seed.py                                        # Database seeding script for demo users, badges, phishing emails, scenarios, and questions
+├── task.md                                        # Development task notes and internal tracking
+│
+├── app/                                           # Flask application package (Application Factory pattern)
+│   ├── __init__.py                                # App factory (create_app), extension initialization, blueprint registration
+│   ├── extensions.py                              # Flask extension instances (SQLAlchemy db, Migrate migrate, LoginManager login_manager)
+│   │
+│   ├── blueprints/                                # Modular route blueprints
+│   │   ├── admin/                                 # Administration & Content Management Blueprint
+│   │   │   ├── __init__.py                        # Blueprint definition for admin_bp
+│   │   │   ├── forms.py                           # Form stubs for admin content management
+│   │   │   └── routes.py                          # Admin dashboard, question/template/scenario management, cohort analytics
+│   │   │
+│   │   ├── api/                                   # REST API Gateway Blueprint
+│   │   │   ├── __init__.py                        # Blueprint definition for api_bp
+│   │   │   ├── forms.py                           # Form stubs for API inputs
+│   │   │   └── routes.py                          # Endpoints for AI mentor feedback, password breach check proxy, and progress updates
+│   │   │
+│   │   ├── auth/                                  # Authentication & Session Management Blueprint
+│   │   │   ├── __init__.py                        # Blueprint definition for auth_bp
+│   │   │   ├── forms.py                           # Form stubs for login and registration
+│   │   │   └── routes.py                          # User registration, login, and logout route handlers
+│   │   │
+│   │   ├── dashboard/                             # Learner Dashboard & Leaderboard Blueprint
+│   │   │   ├── __init__.py                        # Blueprint definition for dashboard_bp
+│   │   │   ├── forms.py                           # Form stubs for dashboard
+│   │   │   └── routes.py                          # Learner progress dashboard, leaderboard, and user profile views
+│   │   │
+│   │   ├── owasp_labs/                            # OWASP Top 10 Interactive Vulnerability Sandboxes
+│   │   │   ├── __init__.py                        # Blueprint definition for owasp_labs_bp
+│   │   │   ├── forms.py                           # Form stubs for OWASP labs
+│   │   │   └── routes.py                          # Simulated SQL Injection, XSS, and IDOR practice labs
+│   │   │
+│   │   ├── passive_hub/                           # Passive Cyber Awareness & Legal Knowledge Hub
+│   │   │   ├── __init__.py                        # Blueprint definition for passive_hub_bp
+│   │   │   ├── forms.py                           # Form stubs for passive hub
+│   │   │   └── routes.py                          # Threat intelligence feed, IT Act 2000 legal references, reporting guides, helplines
+│   │   │
+│   │   ├── phishing/                              # Phishing & Email Spoofing Simulator Blueprint
+│   │   │   ├── __init__.py                        # Blueprint definition for phishing_bp
+│   │   │   ├── forms.py                           # Form stubs for phishing exercises
+│   │   │   └── routes.py                          # Phishing inbox, email header/link inspection, answer evaluation with Gemini feedback
+│   │   │
+│   │   └── soc_analyst/                           # SOC Analyst & Incident Response Simulator Blueprint
+│   │       ├── __init__.py                        # Blueprint definition for soc_analyst_bp
+│   │       ├── forms.py                           # Form stubs for SOC analyst
+│   │       └── routes.py                          # SIEM log triage, MITRE ATT&CK technique mapping, branching incident response game
+│   │
+│   ├── models/                                    # SQLAlchemy ORM Database Models
+│   │   ├── __init__.py                            # Model package aggregator
+│   │   ├── badge.py                               # Badge model and user_badges many-to-many junction table
+│   │   ├── incident_scenario.py                   # Multi-step branching incident response scenario model
+│   │   ├── phishing_example.py                    # Phishing email template model with red flags and spoofed URLs
+│   │   ├── question.py                            # MCQ question model with choices JSON and difficulty
+│   │   ├── score.py                               # User session score and module progress tracking model
+│   │   └── user.py                                # User model with Werkzeug password hashing, RBAC, XP/level, and streak tracking
+│   │
+│   ├── services/                                  # External API service integrations
+│   │   ├── __init__.py                            # Service package initialization
+│   │   ├── gemini_service.py                      # Google Gemini API wrapper (gemini-2.0-flash) with static fallback
+│   │   └── hibp_service.py                        # HaveIBeenPwned API client implementing SHA-1 k-Anonymity range lookup
+│   │
+│   ├── static/                                    # Static assets for Flask Jinja templates
+│   │   ├── css/                                   # Stylesheets
+│   │   │   ├── dark_mode.css                      # Cyber dark theme styles and neon accents
+│   │   │   └── main.css                           # Base application stylesheet
+│   │   ├── img/                                   # Image assets (.gitkeep placeholder)
+│   │   └── js/                                    # Client-side JavaScript
+│   │       ├── htmx_helpers.js                    # Utility helpers for dynamic UI interactions
+│   │       ├── main.js                            # General client-side scripts
+│   │       └── password_meter.js                  # Real-time password strength meter and debounced HIBP breach check caller
+│   │
+│   └── templates/                                 # Server-rendered Jinja2 HTML templates
+│       ├── admin/                                 # Admin panel views
+│       │   ├── cohort_analytics.html              # Tier distribution and module score analytics
+│       │   ├── dashboard.html                     # Admin overview metrics (users, scores, templates)
+│       │   ├── manage_phishing_templates.html     # Phishing email template list, create, and delete
+│       │   ├── manage_questions.html              # Quiz question listing view
+│       │   └── manage_scenarios.html              # Incident scenario creation and management
+│       ├── auth/                                  # Authentication views
+│       │   ├── login.html                         # User login form
+│       │   └── register.html                      # User account registration form
+│       ├── dashboard/                             # Learner portal views
+│       │   ├── index.html                         # Personal progress dashboard, recent activities, module launchers
+│       │   ├── leaderboard.html                   # Global XP leaderboard table
+│       │   └── profile.html                       # User profile, statistics, and earned achievements
+│       ├── layouts/                               # Master template layouts
+│       │   ├── base_dark.html                     # Dark-mode master layout with Bootstrap 5
+│       │   ├── base_gamified.html                 # Gamified cyber dashboard layout with level/XP header
+│       │   └── base_light.html                    # Light-mode master layout
+│       ├── owasp_labs/                            # OWASP sandbox templates
+│       │   ├── idor_lab.html                      # Insecure Direct Object Reference simulation
+│       │   ├── sql_injection_lab.html             # Interactive SQL injection query builder sandbox
+│       │   └── xss_lab.html                       # Side-by-side vulnerable vs. sanitized XSS sandbox
+│       ├── partials/                              # Reusable Jinja template snippets
+│       │   ├── badge_grid.html                    # Grid layout for unlocked achievement badges
+│       │   ├── question_card.html                 # MCQ question display card
+│       │   ├── radar_chart.html                   # Visual skill competency placeholder
+│       │   └── xp_bar.html                        # Animated XP progression bar
+│       ├── passive_hub/                           # Educational awareness templates
+│       │   ├── helplines.html                     # National cybercrime helplines (1930) and reporting links
+│       │   ├── index.html                         # Passive knowledge hub directory
+│       │   ├── legal_reference.html               # IT Act 2000 sections, penalties, and legal rights
+│       │   ├── reporting_guide.html               # Step-by-step FIR and evidence preservation guide
+│       │   └── threat_feed.html                   # Real-time threat news and vulnerability advisories
+│       ├── phishing/                              # Phishing simulation views
+│       │   ├── inbox.html                         # Simulated email client inbox with difficulty filters
+│       │   └── inspect_email.html                 # Email inspector, hover URL preview, verdict submission, AI feedback
+│       └── soc_analyst/                           # SOC training views
+│           ├── incident_response_game.html        # Interactive branching incident response exercise
+│           ├── mitre_mapping.html                 # ATT&CK technique identification challenge
+│           └── siem_log_analyzer.html             # Simulated log triage workbench with malicious log flagging
+│
+├── docs/                                          # Project documentation and SRS artifacts
+│   ├── Chakravyu_Report.docx                      # Formal academic project report and SRS specification (.docx)
+│   └── Chakravyu_Report.pdf                       # Compiled PDF version of the project report
+│
+├── frontend/                                      # React 19 + Vite frontend application
+│   ├── index.html                                 # HTML5 entry point with Google Fonts (Outfit, Inter)
+│   ├── package.json                               # Frontend dependencies (React 19, TailwindCSS, Framer Motion, Recharts)
+│   ├── vite.config.js                             # Vite bundler configuration with @vitejs/plugin-react
+│   │
+│   └── src/                                       # React application source code
+│       ├── App.jsx                                # Main application router, route transitions, and layout shell
+│       ├── index.css                              # Tailwind and custom theme styles (cyberpunk gold/dark palette)
+│       ├── main.jsx                               # React DOM root entry point
+│       │
+│       ├── assets/                                # Static SVG graphics
+│       │   ├── react.svg                          # React logo
+│       │   └── vite.svg                           # Vite logo
+│       │
+│       ├── components/                            # Modular React UI components
+│       │   ├── ai/                                # AI assistant components
+│       │   │   ├── AIAssistantDrawer.jsx          # Slide-out interactive chat drawer for Chakravyuh Saarthi
+│       │   │   └── AIAssistantFloating.jsx        # Floating quick-launch launcher button for AI Saarthi
+│       │   ├── awareness/                         # Awareness components
+│       │   │   └── SecurityInsightsFeed.jsx       # Threat insights, security advisories, and quick tips feed
+│       │   ├── common/                            # Reusable UI widgets
+│       │   │   ├── AnimatedButton.jsx             # Framer-motion interactive micro-animated button
+│       │   │   ├── Badge.jsx                      # Status and category badge indicator
+│       │   │   ├── ChakravyuhLoader.jsx           # Animated portal boot loader screen
+│       │   │   ├── ChakravyuhLogo.jsx             # Brand shield SVG emblem
+│       │   │   ├── FormattedText.jsx              # Markdown parser for clean bold/code/list rendering without raw symbols
+│       │   │   ├── GlassCard.jsx                  # Glassmorphism container with subtle glow options
+│       │   │   ├── HeritageSeparator.jsx          # Decorative cyber divider separator
+│       │   │   ├── Modal.jsx                      # Accessible modal dialog container
+│       │   │   ├── ProgressBar.jsx                # Multi-color animated progress bar
+│       │   │   ├── SearchBar.jsx                  # Filter and search input with instant debounce
+│       │   │   ├── StatCard.jsx                   # Metric summary card with icons and trends
+│       │   │   └── Tooltip.jsx                    # Hover contextual hint tooltip
+│       │   ├── layout/                            # Layout wrapper components
+│       │   │   ├── BackgroundEffects.jsx          # Ambient cyber background glows and grid lines
+│       │   │   ├── Footer.jsx                     # Site footer with helpline 1930 and disclaimer
+│       │   │   └── Navbar.jsx                     # Sticky navigation bar with language toggle, emergency 1930 button, XP counter
+│       │   ├── network/                           # Network visualization components
+│       │   │   └── NetworkVisualizer.jsx          # Interactive node graph depicting cyber attack pathways
+│       │   └── simulations/                       # Interactive training sandbox components
+│       │       ├── PasswordLab.jsx                # Real-time entropy calculator, crack time estimator, passphrase generator, breach check
+│       │       ├── PhishingSimulator.jsx          # Simulated email/SMS client with header inspection and phishing detection
+│       │       ├── QuizArena.jsx                  # Cyber defense quiz challenge arena with score and accuracy tally
+│       │       ├── SocialEngineeringLab.jsx       # Branching social manipulation and scam call decision simulator
+│       │       └── UrlInspector.jsx               # Fake website and typosquatting domain analysis tool
+│       │
+│       ├── context/                               # React Context State Providers
+│       │   ├── AccessibilityContext.jsx           # Font size scaling, high-contrast mode, and audio cues provider
+│       │   ├── AuthContext.jsx                    # User session, XP scoring, level progression, badge management, and local storage state
+│       │   └── LanguageContext.jsx                # Dual language switching provider (English and Hindi/Hinglish)
+│       │
+│       ├── data/                                  # Local mock datasets and multilingual strings
+│       │   ├── mockArticles.js                    # Educational security awareness articles
+│       │   ├── mockSimulations.js                 # Phishing emails, smishing SMS, social scenarios, URLs, and quiz questions
+│       │   ├── mockStats.js                       # Threat trend metrics and national cybercrime statistics
+│       │   ├── mockThreats.js                     # Threat intelligence library and attack case studies
+│       │   ├── mockVideos.js                      # Curated educational video masterclass metadata
+│       │   └── translations.js                    # Complete bilingual translations (English & Hindi)
+│       │
+│       ├── pages/                                 # Full-page views
+│       │   ├── AIAssistantPage.jsx                # Fullscreen dedicated Chakravyuh Saarthi AI chat studio
+│       │   ├── ArticleDetailPage.jsx              # In-depth reading view for awareness articles
+│       │   ├── AuthPage.jsx                       # Animated login/register screen with demo account auto-fill
+│       │   ├── AwarenessHubPage.jsx               # Curated article directory with topic filters
+│       │   ├── DashboardPage.jsx                  # Main student dashboard with radar competency chart, XP tracker, daily tasks
+│       │   ├── LandingPage.jsx                    # Marketing landing page with hero banner, feature highlights, and module cards
+│       │   ├── NetworkVisualizationPage.jsx       # Interactive network topology attack path simulation page
+│       │   ├── NotFoundPage.jsx                   # Custom 404 error page
+│       │   ├── ProfilePage.jsx                    # User achievements, activity history, and printable completion certificate
+│       │   ├── SafetyTipsPage.jsx                 # Quick cybersecurity checklists and golden security rules
+│       │   ├── SimulationsPage.jsx                # Tabbed multi-simulation launch center (Phishing, Password, Social, Quiz, URL)
+│       │   ├── StatisticsPage.jsx                 # Cybercrime data visualization with Recharts interactive charts
+│       │   ├── ThreatIntelPage.jsx                # Threat intelligence directory and technical vulnerability guides
+│       │   ├── ThreatTrendsPage.jsx               # Emerging scam alerts and cyber trend analysis
+│       │   └── VideoHubPage.jsx                   # Video masterclass library with category filtering
+│       │
+│       └── services/                              # Frontend API and service clients
+│           ├── aiService.js                       # Gemini API client (gemini-1.5-flash) with local intelligence fallback
+│           ├── api.js                             # Axios HTTP client configured for backend proxy (http://localhost:5000)
+│           ├── articleService.js                  # Service fetching awareness articles
+│           ├── authService.js                     # Authentication service with backend login/register and local fallback
+│           ├── simulationService.js               # Service retrieving simulation data and calling HIBP breach check API
+│           ├── statsService.js                    # Service fetching cybercrime metrics
+│           ├── threatService.js                   # Service fetching threat intelligence records
+│           └── videoService.js                    # Service fetching video library records
+│
+├── migrations/                                    # Alembic database migration scripts (Flask-Migrate)
+│   ├── alembic.ini                                # Alembic configuration
+│   ├── env.py                                     # Migration runtime environment
+│   ├── README                                     # Migration documentation
+│   ├── script.py.mako                             # Migration template script
+│   └── versions/
+│       └── 3fe1637a8e52_init.py                   # Initial migration script creating users, scores, badges, etc.
+│
+└── tests/                                         # Automated test suite
+    ├── __init__.py                                # Test package initializer
+    ├── test_auth.py                               # Unit tests for user registration, login, and password hashing
+    ├── test_models.py                             # Unit tests for database models (User, Score, Question, etc.)
+    └── test_services.py                           # Unit tests for Gemini and HIBP external services
+===============================================================================

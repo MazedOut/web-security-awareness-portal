@@ -12,7 +12,8 @@ import {
   Info, 
   ChevronRight,
   RotateCcw,
-  Sparkles
+  Sparkles,
+  Loader2
 } from 'lucide-react';
 import { GlassCard } from '../common/GlassCard';
 import { AnimatedButton } from '../common/AnimatedButton';
@@ -31,6 +32,8 @@ export const PhishingSimulator = () => {
   const [showHeaders, setShowHeaders] = useState(false);
   const [userDecision, setUserDecision] = useState(null); // 'phish' or 'safe'
   const [feedback, setFeedback] = useState(null);
+  const [aiExplanation, setAiExplanation] = useState(null); // AI explanation (Items 36, 38, 42)
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
 
   useEffect(() => {
     simulationService.getPhishingEmails().then((data) => {
@@ -71,6 +74,35 @@ export const PhishingSimulator = () => {
     setUserDecision(null);
     setFeedback(null);
     setShowHeaders(false);
+    setAiExplanation(null);
+  };
+
+  // 'Explain This with AI' handler (Items 36, 38, 42)
+  const handleAIExplain = async () => {
+    if (!selectedItem || isLoadingAI) return;
+    setIsLoadingAI(true);
+    setAiExplanation(null);
+    try {
+      const body = activeTab === 'email'
+        ? { question: selectedItem.subject, user_answer: userDecision === 'phish' ? 'Phishing' : 'Legitimate', is_correct: feedback?.status === 'correct', difficulty: selectedItem.difficulty || 'intermediate' }
+        : { question: selectedItem.text, user_answer: userDecision === 'phish' ? 'Scam' : 'Safe', is_correct: feedback?.status === 'correct', difficulty: 'beginner' };
+      const res = await fetch('/api/ai-mentor-feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        credentials: 'include',
+      });
+      if (res.ok) {
+        const json = await res.json();
+        setAiExplanation(json.feedback || json.explanation);
+      } else {
+        setAiExplanation(activeTab === 'email' ? selectedItem.explanation : selectedItem.advice);
+      }
+    } catch {
+      setAiExplanation(activeTab === 'email' ? selectedItem.explanation : selectedItem.advice);
+    } finally {
+      setIsLoadingAI(false);
+    }
   };
 
   return (
@@ -311,6 +343,38 @@ export const PhishingSimulator = () => {
                       ))}
                     </div>
                   )}
+
+                  {/* AI Explain button (Items 36, 38, 42) */}
+                  <div className="pt-3 border-t border-white/10 mt-3">
+                    {!aiExplanation ? (
+                      <button
+                        onClick={handleAIExplain}
+                        disabled={isLoadingAI}
+                        className="flex items-center gap-2 text-xs font-semibold text-purple-300 hover:text-purple-200 transition-colors disabled:opacity-60"
+                      >
+                        {isLoadingAI
+                          ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          : <Sparkles className="w-3.5 h-3.5" />}
+                        {isLoadingAI
+                          ? (lang === 'hi' ? 'AI समझा रहा है…' : 'Fetching AI Explanation…')
+                          : (lang === 'hi' ? '✨ AI से समझाएं' : '✨ Explain This with AI')}
+                      </button>
+                    ) : (
+                      <motion.div
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="space-y-2"
+                      >
+                        <div className="flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                          <span className="text-[10px] uppercase font-bold text-purple-300 tracking-wider">AI Explanation</span>
+                        </div>
+                        <p className="text-xs text-purple-100 leading-relaxed bg-purple-900/30 border border-purple-400/20 rounded-lg p-3">
+                          {aiExplanation}
+                        </p>
+                      </motion.div>
+                    )}
+                  </div>
                 </motion.div>
               )}
 

@@ -1,0 +1,68 @@
+{% extends "layouts/base_light.html" %}
+
+{% block title %}Edit Question #{{ question.id }} - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 760px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold"><i class="bi bi-pencil-square me-2"></i>Edit Question <code>#{{ question.id }}</code></h2>
+        <a href="{{ url_for('admin.manage_questions') }}" class="btn btn-outline-secondary">← Back to Questions</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form action="{{ url_for('admin.edit_question', question_id=question.id) }}" method="POST">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Question Prompt *</label>
+                        <textarea name="prompt" class="form-control" rows="3" required>{{ question.prompt }}</textarea>
+                    </div>
+                    {% for i, label in [(0, 'A'), (1, 'B'), (2, 'C'), (3, 'D')] %}
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Option {{ label }}{% if label in ('A', 'B') %} *{% endif %}</label>
+                        <input type="text" name="option_{{ label|lower }}" class="form-control"
+                               value="{{ choices[i] if choices|length > i else '' }}"
+                               {% if label in ('A', 'B') %}required{% endif %}>
+                    </div>
+                    {% endfor %}
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Correct Answer * <small class="text-muted">(exact text of one option)</small></label>
+                        <input type="text" name="correct_answer" class="form-control" value="{{ question.correct_answer }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Module</label>
+                        <input type="text" name="module" class="form-control" value="{{ question.module }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Tier (1-3)</label>
+                        <input type="number" name="tier" class="form-control" min="1" max="3" value="{{ question.tier }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Difficulty (1-3)</label>
+                        <input type="number" name="difficulty" class="form-control" min="1" max="3" value="{{ question.difficulty }}">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Static Explanation (Fallback)</label>
+                        <textarea name="explanation" class="form-control" rows="2">{{ question.explanation or '' }}</textarea>
+                    </div>
+                </div>
+                <div class="mt-4 d-flex gap-2 justify-content-end">
+                    <a href="{{ url_for('admin.manage_questions') }}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { LanguageProvider } from './context/LanguageContext';
 import { AccessibilityProvider } from './context/AccessibilityContext';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { BackgroundEffects } from './components/layout/BackgroundEffects';
@@ -24,6 +24,7 @@ import { AuthPage } from './pages/AuthPage';
 import { ThreatTrendsPage } from './pages/ThreatTrendsPage';
 import { SafetyTipsPage } from './pages/SafetyTipsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { LeaderboardPage } from './pages/LeaderboardPage';
 import { ChakravyuhLoader } from './components/common/ChakravyuhLoader';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -36,7 +37,6 @@ function ScrollToTop() {
   return null;
 }
 
-
 const PageTransition = ({ children }) => (
   <motion.div
     initial={{ opacity: 0, y: 15 }}
@@ -48,6 +48,19 @@ const PageTransition = ({ children }) => (
     {children}
   </motion.div>
 );
+
+/**
+ * ProtectedRoute — wraps private routes (dashboard, simulations, profile).
+ * If the user is not authenticated, redirect to /login.
+ * (Item 8 in GAP_REPORT: Frontend Guest Route Protection)
+ */
+function ProtectedRoute({ children }) {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+}
 
 function AppContent() {
   const [isInitializing, setIsInitializing] = React.useState(true);
@@ -73,18 +86,63 @@ function AppContent() {
         <main className="flex-1">
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
+              {/* Public routes — accessible to guests */}
               <Route path="/" element={<PageTransition><AuthPage /></PageTransition>} />
               <Route path="/landing" element={<PageTransition><LandingPage /></PageTransition>} />
-              <Route path="/dashboard" element={<PageTransition><DashboardPage /></PageTransition>} />
+              <Route path="/auth" element={<PageTransition><AuthPage /></PageTransition>} />
+              <Route path="/login" element={<PageTransition><AuthPage /></PageTransition>} />
               <Route path="/articles" element={<PageTransition><AwarenessHubPage /></PageTransition>} />
               <Route path="/articles/:id" element={<PageTransition><ArticleDetailPage /></PageTransition>} />
               <Route path="/videos" element={<PageTransition><VideoHubPage /></PageTransition>} />
               <Route path="/threats" element={<PageTransition><ThreatIntelPage /></PageTransition>} />
               <Route path="/trends" element={<PageTransition><ThreatTrendsPage /></PageTransition>} />
               <Route path="/safety-tips" element={<PageTransition><SafetyTipsPage /></PageTransition>} />
-              <Route path="/network-lab" element={<PageTransition><NetworkVisualizationPage /></PageTransition>} />
               <Route path="/statistics" element={<PageTransition><StatisticsPage /></PageTransition>} />
-              <Route path="/simulations" element={<PageTransition><SimulationsPage /></PageTransition>} />
+              {/* Public leaderboard — visible to guests (FR-03.2, Item 33) */}
+              <Route path="/leaderboard" element={<PageTransition><LeaderboardPage /></PageTransition>} />
+
+              {/* Protected routes — require authentication (Item 8) */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <PageTransition><DashboardPage /></PageTransition>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/simulations"
+                element={
+                  <ProtectedRoute>
+                    <PageTransition><SimulationsPage /></PageTransition>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <PageTransition><ProfilePage /></PageTransition>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/ai-assistant"
+                element={
+                  <ProtectedRoute>
+                    <PageTransition><AIAssistantPage /></PageTransition>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/network-lab"
+                element={
+                  <ProtectedRoute>
+                    <PageTransition><NetworkVisualizationPage /></PageTransition>
+                  </ProtectedRoute>
+                }
+              />
+
               {/* Simulation sub-path aliases → redirect to tab system */}
               <Route path="/simulations/phishing" element={<Navigate to="/simulations?tab=phishing" replace />} />
               <Route path="/simulations/fake-website" element={<Navigate to="/simulations?tab=url-inspector" replace />} />
@@ -92,10 +150,7 @@ function AppContent() {
               <Route path="/simulations/password-lab" element={<Navigate to="/simulations?tab=password" replace />} />
               <Route path="/simulations/social-engineering" element={<Navigate to="/simulations?tab=social-eng" replace />} />
               <Route path="/simulations/quiz" element={<Navigate to="/simulations?tab=quiz" replace />} />
-              <Route path="/ai-assistant" element={<PageTransition><AIAssistantPage /></PageTransition>} />
-              <Route path="/profile" element={<PageTransition><ProfilePage /></PageTransition>} />
-              <Route path="/auth" element={<PageTransition><AuthPage /></PageTransition>} />
-              <Route path="/login" element={<PageTransition><AuthPage /></PageTransition>} />
+
               <Route path="*" element={<PageTransition><NotFoundPage /></PageTransition>} />
             </Routes>
           </AnimatePresence>

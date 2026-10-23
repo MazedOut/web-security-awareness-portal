@@ -48,11 +48,18 @@ export const AuthProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : INITIAL_USER;
   });
 
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  // Read persisted auth state from localStorage so page refresh doesn't log users out
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('chakravyuh_authenticated') === 'true';
+  });
 
   useEffect(() => {
     localStorage.setItem('chakravyuh_user', JSON.stringify(user));
   }, [user]);
+
+  useEffect(() => {
+    localStorage.setItem('chakravyuh_authenticated', isAuthenticated ? 'true' : 'false');
+  }, [isAuthenticated]);
 
   const triggerLevelUpConfetti = () => {
     try {
@@ -209,6 +216,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(INITIAL_USER);
     setIsAuthenticated(false);
+    localStorage.removeItem('chakravyuh_authenticated');
   };
 
   const getRankTitle = (score) => {

@@ -22,6 +22,7 @@ from app.models.phishing_example import PhishingExample
 from app.models.incident_scenario import IncidentScenario
 from app.models.score import Score
 from app.models.badge import Badge
+from app.models.game import Game
 
 admin_bp = Blueprint('admin', __name__, template_folder='../../templates/admin')
 
@@ -53,6 +54,8 @@ def dashboard():
     total_phishing = PhishingExample.query.count()
     total_scenarios = IncidentScenario.query.count()
     total_questions = Question.query.count()
+    total_modules = Game.query.count()
+    active_modules = Game.query.filter_by(is_active=True).count()
     
     return render_template(
         'dashboard.html',
@@ -61,6 +64,8 @@ def dashboard():
         total_phishing=total_phishing,
         total_scenarios=total_scenarios,
         total_questions=total_questions,
+        total_modules=total_modules,
+        active_modules=active_modules,
     )
 
 
@@ -304,6 +309,39 @@ def add_scenario():
     return redirect(url_for('admin.manage_scenarios'))
 
 
+@admin_bp.route('/manage-scenarios/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_scenario(id):
+    """Edit an existing incident scenario."""
+    scenario = IncidentScenario.query.get_or_404(id)
+    if request.method == 'POST':
+        title = (request.form.get('title') or '').strip()
+        description = (request.form.get('description') or '').strip()
+        scenario_type = (request.form.get('scenario_type') or 'social_engineering').strip()
+        steps = request.form.get('steps') or ''
+        mitre_tactics = request.form.get('mitre_tactics') or ''
+        difficulty = int(request.form.get('difficulty', 1))
+        xp_reward = int(request.form.get('xp_reward', 50))
+
+        if not title or not description:
+            flash('Title and description are required.', 'danger')
+            return redirect(url_for('admin.edit_scenario', id=id))
+
+        scenario.title = title
+        scenario.description = description
+        scenario.scenario_type = scenario_type
+        scenario.steps = steps
+        scenario.mitre_tactics = mitre_tactics
+        scenario.difficulty = difficulty
+        scenario.xp_reward = xp_reward
+        db.session.commit()
+        flash('Scenario updated successfully.', 'success')
+        return redirect(url_for('admin.manage_scenarios'))
+
+    return render_template('edit_scenario.html', scenario=scenario)
+
+
 @admin_bp.route('/manage-scenarios/delete/<int:id>', methods=['POST'])
 @login_required
 @admin_required
@@ -313,6 +351,32 @@ def delete_scenario(id):
     db.session.commit()
     flash('Scenario deleted.', 'success')
     return redirect(url_for('admin.manage_scenarios'))
+
+
+# ---------------------------------------------------------------------------
+# Module Activation Management  (Data Dict 6.3.2, Item 50)
+# ---------------------------------------------------------------------------
+
+@admin_bp.route('/manage-modules')
+@login_required
+@admin_required
+def manage_modules():
+    """List all game modules with activation toggles (Data Dict 6.3.2)."""
+    modules = Game.query.order_by(Game.game_id).all()
+    return render_template('manage_modules.html', modules=modules)
+
+
+@admin_bp.route('/manage-modules/<int:game_id>/toggle', methods=['POST'])
+@login_required
+@admin_required
+def toggle_module(game_id):
+    """Toggle is_active state for a game module without deleting historical records."""
+    game = Game.query.get_or_404(game_id)
+    game.is_active = not game.is_active
+    db.session.commit()
+    status = 'activated' if game.is_active else 'deactivated'
+    flash(f"Module '{game.game_name}' has been {status}.", 'success')
+    return redirect(url_for('admin.manage_modules'))
 
 
 # ---------------------------------------------------------------------------

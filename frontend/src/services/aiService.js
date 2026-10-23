@@ -1,61 +1,49 @@
 import { apiClient } from './api';
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
-
 export const aiService = {
   askAssistant: async (prompt, lang = 'en') => {
-    // 1. Try Gemini API directly if key is configured
-    if (GEMINI_API_KEY) {
-      try {
-        const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [
-                {
-                  parts: [
-                    {
-                      text: `You are Chakravyuh Saathi—an empathetic, highly knowledgeable, and friendly cybersecurity guide.
-Your goal is to explain cyber threats, scam warnings, and safety tips simply without confusing technical jargon.
-IMPORTANT RULE: If the user asks questions unrelated to cybersecurity, online safety, privacy, scams, malware, passwords, safe browsing, or digital security, politely respond with exactly: "I can only help with cybersecurity and online safety related topics."
-User Preferred Language: ${lang === 'hi' ? 'Hindi and Hinglish' : 'English with simple analogies'}.
-If explaining in Hinglish, use clean conversational phrasing.
-User Query: "${prompt}"`
-                    }
-                  ]
-                }
-              ]
-            })
-          }
-        );
-        const data = await response.json();
-        if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-          return data.candidates[0].content.parts[0].text;
-        }
-      } catch (err) {
-        console.warn('Gemini API call failed, falling back to local mentor engine:', err);
-      }
-    }
-
-    // 2. Try Backend AI endpoint
+    // 1. Query secure backend proxy (GEMINI_API_KEY resides server-side only, FR-05.5)
     try {
-      const res = await apiClient.post('/api/ai-mentor-feedback', {
+      const res = await apiClient.post('/api/ai-explain', {
         question: prompt,
-        user_answer: 'User inquiry',
+        user_answer: 'User security inquiry',
         is_correct: true,
-        difficulty: 'general'
+        difficulty: 'general',
+        static_fallback: ''
       });
-      if (res.data?.feedback) {
-        return res.data.feedback;
+      if (res.data?.explanation || res.data?.feedback) {
+        return res.data.explanation || res.data.feedback;
       }
     } catch (e) {
-      // Backend not running or returned error, use local intelligence engine
+      // Backend unreachable or returned error, fall back to local intelligence engine
     }
 
-    // 3. High-Intelligence Local Security Knowledge Engine (Instant offline fallback)
+    // 2. High-Intelligence Local Security Knowledge Engine (Instant offline fallback, FR-05.4)
     return generateLocalSecurityAdvice(prompt, lang);
+  },
+
+  explainQuestion: async ({ question, answer, isCorrect, difficulty, staticFallback }) => {
+    // Query backend AI explanation with static fallback (FR-05.1-5.7)
+    try {
+      const res = await apiClient.post('/api/ai-explain', {
+        question,
+        user_answer: answer,
+        is_correct: isCorrect,
+        difficulty: difficulty || 'beginner',
+        static_fallback: staticFallback || ''
+      });
+      return {
+        text: res.data?.explanation || res.data?.feedback || staticFallback,
+        isAI: !!res.data?.is_ai,
+        source: res.data?.source || (res.data?.is_ai ? 'ai' : 'static_fallback')
+      };
+    } catch {
+      return {
+        text: staticFallback || "Review the explanation above to understand this security concept.",
+        isAI: false,
+        source: 'static_fallback'
+      };
+    }
   }
 };
 

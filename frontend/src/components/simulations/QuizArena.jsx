@@ -49,6 +49,7 @@ export const QuizArena = () => {
 
   // AI explanation state (Items 36, 38, 42)
   const [aiExplanation, setAiExplanation] = useState(null);
+  const [aiExplanationSource, setAiExplanationSource] = useState('ai');
   const [isLoadingAI, setIsLoadingAI] = useState(false);
 
   useEffect(() => {
@@ -151,7 +152,7 @@ export const QuizArena = () => {
     setIsLoadingAI(true);
     setAiExplanation(null);
     try {
-      const res = await fetch('/api/ai-mentor-feedback', {
+      const res = await fetch('/api/ai-explain', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -159,18 +160,22 @@ export const QuizArena = () => {
           user_answer: currentQ.options?.[selectedAnswer] || '',
           is_correct: selectedAnswer === currentQ.correctIndex,
           difficulty: currentQ.difficulty || 'intermediate',
+          static_fallback: currentQ.explanation || '',
         }),
         credentials: 'include',
       });
       if (res.ok) {
         const json = await res.json();
-        setAiExplanation(json.feedback || json.explanation);
+        setAiExplanation(json.explanation || json.feedback);
+        setAiExplanationSource(json.is_ai ? 'ai' : 'static_fallback');
       } else {
         // Fall back to static explanation
-        setAiExplanation(currentQ.explanation || 'No additional explanation available.');
+        setAiExplanation(currentQ.explanation || 'Review the explanation above to understand this concept.');
+        setAiExplanationSource('static_fallback');
       }
     } catch {
-      setAiExplanation(currentQ.explanation || 'AI Mentor is currently offline. Please review the explanation above.');
+      setAiExplanation(currentQ.explanation || 'AI Mentor is currently offline. Review the explanation above.');
+      setAiExplanationSource('static_fallback');
     } finally {
       setIsLoadingAI(false);
     }
@@ -356,12 +361,27 @@ export const QuizArena = () => {
                     className="space-y-2"
                   >
                     <div className="flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-purple-500" />
-                      <span className="text-[10px] uppercase font-bold text-purple-600 tracking-wider">
-                        AI Explanation
-                      </span>
+                      {aiExplanationSource === 'ai' ? (
+                        <>
+                          <Sparkles className="w-3.5 h-3.5 text-purple-500" />
+                          <span className="text-[10px] uppercase font-bold text-purple-600 tracking-wider">
+                            AI Explanation (Gemini 2.0 Flash)
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
+                          <span className="text-[10px] uppercase font-bold text-amber-600 tracking-wider">
+                            Static Fallback Explanation (Offline)
+                          </span>
+                        </>
+                      )}
                     </div>
-                    <p className="text-xs text-slate-700 leading-relaxed bg-purple-50 border border-purple-200/60 rounded-lg p-3">
+                    <p className={`text-xs leading-relaxed rounded-lg p-3 border ${
+                      aiExplanationSource === 'ai'
+                        ? 'text-slate-700 bg-purple-50 border-purple-200/60'
+                        : 'text-slate-700 bg-amber-50 border-amber-200/60'
+                    }`}>
                       {aiExplanation}
                     </p>
                   </motion.div>

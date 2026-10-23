@@ -16,9 +16,10 @@ from flask import current_app
 logger = logging.getLogger(__name__)
 
 
-def get_ai_feedback(question, user_answer, is_correct, difficulty="beginner"):
+def get_ai_feedback_with_source(question, user_answer, is_correct, difficulty="beginner", static_fallback=None):
     """
     Generate contextual AI mentor feedback for a user's answer.
+    Returns (feedback_text, is_ai_boolean).
 
     Args:
         question (str): The question text.
@@ -26,15 +27,16 @@ def get_ai_feedback(question, user_answer, is_correct, difficulty="beginner"):
         is_correct (bool): Whether the answer was correct.
         difficulty (str): Difficulty/tier level to scope explanation depth.
             One of "beginner", "intermediate", "advanced".
+        static_fallback (str): Static explanation to use if AI is unavailable.
 
     Returns:
-        str: AI-generated (or fallback static) explanation text.
+        tuple[str, bool]: (explanation_text, is_ai_generated)
     """
     api_key = current_app.config.get("GEMINI_API_KEY")
 
     if not api_key or api_key == "your_gemini_api_key_here":
         logger.info("Gemini API key not configured — using static fallback.")
-        return _static_fallback_feedback(is_correct)
+        return _static_fallback_feedback(is_correct, static_fallback), False
 
     try:
         import google.generativeai as genai
@@ -83,30 +85,44 @@ def get_ai_feedback(question, user_answer, is_correct, difficulty="beginner"):
                 max_output_tokens=300,
                 temperature=0.7,
             ),
-            request_options={"timeout": 10},
+            request_options={"timeout": 5},
         )
 
         if response and response.text:
-            return response.text.strip()
+            return response.text.strip(), True
         else:
             logger.warning("Gemini returned empty response — using fallback.")
-            return _static_fallback_feedback(is_correct)
+            return _static_fallback_feedback(is_correct, static_fallback), False
 
     except Exception as e:
         logger.warning(f"Gemini API call failed: {e} — using static fallback.")
-        return _static_fallback_feedback(is_correct)
+        return _static_fallback_feedback(is_correct, static_fallback), False
 
 
-def _static_fallback_feedback(is_correct):
+def get_ai_feedback(
+    question: str,
+    user_answer: str,
+    is_correct: bool,
+    difficulty: str = "beginner",
+    static_fallback: str = None,
+) -> str:
+    """
+    Backward-compatible wrapper returning only feedback text.
+    """
+    text, _ = get_ai_feedback_with_source(
+        question, user_answer, is_correct, difficulty, static_fallback
+    )
+    return text
+
+
+def _static_fallback_feedback(is_correct: bool, static_fallback: str = None) -> str:
     """
     Returns a static explanation used when the Gemini API is unavailable.
-
-    Args:
-        is_correct (bool): Whether the answer was correct.
-
-    Returns:
-        str: A generic static feedback message.
+    Prioritizes question/module-specific static explanation if provided.
     """
+    if static_fallback and static_fallback.strip():
+        return static_fallback.strip()
+
     if is_correct:
         return (
             "Great job! You got this one right. Understanding these security "

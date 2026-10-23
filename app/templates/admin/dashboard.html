@@ -63,10 +63,27 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 border-start border-info border-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase fw-bold">Active Modules</h6>
+                    <h2 class="display-5 fw-bold text-info">{{ active_modules }}/{{ total_modules }}</h2>
+                </div>
+            </div>
+        </div>
     </div>
 
     <h3 class="mb-4">Management Modules</h3>
     <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-toggle-on me-2"></i> Manage Module Activation</h5>
+                    <p class="card-text text-muted">Dynamically enable or disable awareness simulations without deleting data (Data Dict 6.3.2).</p>
+                    <a href="{{ url_for('admin.manage_modules') }}" class="btn btn-primary">Go to Modules</a>
+                </div>
+            </div>
+        </div>
         <div class="col-md-6">
             <div class="card shadow-sm h-100">
                 <div class="card-body">

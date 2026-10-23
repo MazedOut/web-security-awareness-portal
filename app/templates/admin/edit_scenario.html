@@ -1,0 +1,68 @@
+{% extends "layouts/base_light.html" %}
+
+{% block title %}Edit Scenario - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 800px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">Edit Incident Scenario #{{ scenario.id }}</h2>
+        <a href="{{ url_for('admin.manage_scenarios') }}" class="btn btn-outline-secondary">Back to Scenarios</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <form action="{{ url_for('admin.edit_scenario', id=scenario.id) }}" method="POST">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold">Title</label>
+                        <input type="text" name="title" class="form-control" value="{{ scenario.title }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Scenario Type</label>
+                        <input type="text" name="scenario_type" class="form-control" value="{{ scenario.scenario_type }}" required>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label fw-semibold">Description</label>
+                        <textarea name="description" class="form-control" rows="3" required>{{ scenario.description }}</textarea>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label fw-semibold">Steps (JSON Array or newline-separated)</label>
+                        <textarea name="steps" class="form-control" rows="3" required>{{ scenario.steps }}</textarea>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label fw-semibold">MITRE Tactics</label>
+                        <input type="text" name="mitre_tactics" class="form-control" value="{{ scenario.mitre_tactics }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Difficulty (1=Beginner, 2=Intermediate, 3=Advanced)</label>
+                        <select name="difficulty" class="form-select">
+                            <option value="1" {% if scenario.difficulty == 1 %}selected{% endif %}>1 - Beginner</option>
+                            <option value="2" {% if scenario.difficulty == 2 %}selected{% endif %}>2 - Intermediate</option>
+                            <option value="3" {% if scenario.difficulty == 3 %}selected{% endif %}>3 - Advanced</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">XP Reward</label>
+                        <input type="number" name="xp_reward" class="form-control" value="{{ scenario.xp_reward }}" required>
+                    </div>
+                    <div class="col-12 mt-4 text-end">
+                        <a href="{{ url_for('admin.manage_scenarios') }}" class="btn btn-outline-secondary me-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

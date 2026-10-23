@@ -10,3 +10,4 @@ from app.models.badge import Badge
 from app.models.question import Question
 from app.models.phishing_example import PhishingExample
 from app.models.incident_scenario import IncidentScenario
+from app.models.game import Game

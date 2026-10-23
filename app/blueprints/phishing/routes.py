@@ -3,13 +3,22 @@ from flask_login import login_required, current_user
 from app.extensions import db
 from app.models.phishing_example import PhishingExample
 from app.models.score import Score
+from app.models.game import Game
 from app.services.gemini_service import get_ai_feedback
 
 phishing_bp = Blueprint('phishing', __name__, template_folder='../../templates/phishing')
 
+@phishing_bp.route('/')
+def index():
+    return redirect(url_for('phishing.inbox'))
+
 @phishing_bp.route('/inbox')
 @login_required
 def inbox():
+    game = Game.query.filter_by(game_type='phishing').first()
+    if game and not game.is_active:
+        flash('The Phishing Simulator module is currently deactivated by an administrator.', 'warning')
+        return redirect(url_for('dashboard.index'))
     difficulty = request.args.get('difficulty', type=int)
     query = PhishingExample.query
     if difficulty:

@@ -3,8 +3,9 @@ from flask_login import login_required, current_user
 from app.extensions import db
 from app.models.user import User
 from app.models.score import Score
-from app.services.gemini_service import get_ai_feedback
-from app.services.hibp_service import check_password_breach
+from app.models.game import Game
+from app.services.gemini_service import get_ai_feedback, get_ai_feedback_with_source
+from app.services.hibp_service import check_password_breach, query_pwned_range
 
 api_bp = Blueprint('api', __name__, template_folder='../../templates/api')
 
@@ -35,23 +36,91 @@ def leaderboard():
     ]
     return jsonify({'leaderboard': data})
 
+
+# ---------------------------------------------------------------------------
+# Security Modules Status  (Data Dict 6.3.2, Item 50)
+# ---------------------------------------------------------------------------
+
+@api_bp.route('/modules', methods=['GET'])
+def get_modules():
+    """Return all security awareness modules with active status."""
+    games = Game.query.order_by(Game.game_id).all()
+    return jsonify({
+        'modules': [
+            {
+                'id': g.game_id,
+                'name': g.game_name,
+                'type': g.game_type,
+                'description': g.description,
+                'is_active': g.is_active,
+            }
+            for g in games
+        ]
+    })
+
+
+# ---------------------------------------------------------------------------
+# AI Educational Explanations  (FR-05.1-5.7, Items 36, 38, 42)
+# ---------------------------------------------------------------------------
+
+@api_bp.route('/ai-explain', methods=['POST'])
 @api_bp.route('/ai-mentor-feedback', methods=['POST'])
-def ai_mentor_feedback():
-    data = request.get_json()
-    if not data:
-        return jsonify({'error': 'Invalid JSON data'}), 400
-    
-    question = data.get('question')
-    user_answer = data.get('user_answer')
-    is_correct = data.get('is_correct')
-    difficulty = data.get('difficulty')
-    
-    feedback = get_ai_feedback(question, user_answer, is_correct, difficulty)
-    
-    return jsonify({'feedback': feedback})
+def ai_explain():
+    """
+    Generate contextual explanation via Gemini with static fallback.
+    Accepts question, answer, correctness, and static_fallback.
+    Returns explanation, is_ai flag, and source tag.
+    Never persists explanations to database (FR-05.6).
+    """
+    data = request.get_json() or {}
+    question = data.get('question') or data.get('prompt') or ''
+    user_answer = data.get('user_answer') or ''
+    is_correct = bool(data.get('is_correct', False))
+    difficulty = data.get('difficulty') or 'beginner'
+    static_fallback = data.get('static_fallback') or ''
+
+    feedback, is_ai = get_ai_feedback_with_source(
+        question=question,
+        user_answer=user_answer,
+        is_correct=is_correct,
+        difficulty=difficulty,
+        static_fallback=static_fallback,
+    )
+
+    return jsonify({
+        'feedback': feedback,
+        'explanation': feedback,
+        'is_ai': is_ai,
+        'source': 'ai' if is_ai else 'static_fallback'
+    })
+
+
+# ---------------------------------------------------------------------------
+# HaveIBeenPwned k-Anonymity Range Proxy  (FR-06.1-6.5, Items 18, 19, 23)
+# ---------------------------------------------------------------------------
+
+@api_bp.route('/pwned-range/<string:prefix>', methods=['GET'])
+def pwned_range(prefix):
+    """
+    k-Anonymity range proxy endpoint (FR-06.1).
+    Accepts ONLY a 5-character hexadecimal SHA-1 prefix.
+    Full password or complete hash is NEVER accepted or transmitted.
+    Returns matching hash suffixes with counts for local client comparison.
+    """
+    clean_prefix = (prefix or '').strip().upper()
+    if len(clean_prefix) != 5 or not all(c in '0123456789ABCDEF' for c in clean_prefix):
+        return jsonify({'error': 'Invalid 5-character hexadecimal prefix'}), 400
+
+    range_text = query_pwned_range(clean_prefix)
+    return jsonify({
+        'prefix': clean_prefix,
+        'hashes': range_text
+    })
+
 
 @api_bp.route('/check-password-breach', methods=['POST'])
 def check_password_breach_api():
+    """Server-side breach check fallback for legacy clients."""
     data = request.get_json()
     if not data:
         return jsonify({'error': 'Invalid JSON data'}), 400

@@ -79,3 +79,31 @@ def check_password_breach(password: str) -> int:
 def _sha1_hash(password: str) -> str:
     """Returns the uppercase SHA-1 hex digest of the given password."""
     return hashlib.sha1(password.encode("utf-8")).hexdigest().upper()
+
+
+def query_pwned_range(prefix: str) -> str:
+    """
+    Fetch the range response from HIBP for a 5-character SHA-1 prefix.
+    Only the 5-character prefix is transmitted (k-Anonymity model, FR-06.1).
+    Full passwords and complete hashes never touch the external network.
+
+    Args:
+        prefix (str): 5-character hexadecimal SHA-1 prefix.
+
+    Returns:
+        str: Raw lines of SUFFIX:COUNT from HIBP, or empty string on error.
+    """
+    if not prefix or len(prefix) != 5:
+        return ""
+
+    try:
+        response = requests.get(
+            f"{HIBP_RANGE_URL}{prefix.upper()}",
+            headers={"User-Agent": USER_AGENT},
+            timeout=REQUEST_TIMEOUT,
+        )
+        response.raise_for_status()
+        return response.text
+    except Exception as exc:
+        logger.warning(f"HIBP range query failed for prefix {prefix}: {exc}")
+        return ""

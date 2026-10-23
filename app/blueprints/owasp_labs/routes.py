@@ -7,10 +7,20 @@ XSS, and Broken Access Control / IDOR — all safely simulated.
 """
 
 import html
-from flask import Blueprint, render_template, request, session
+from flask import Blueprint, render_template, request, session, redirect, url_for, flash
 from flask_login import login_required
+from app.models.game import Game
 
 owasp_labs_bp = Blueprint("owasp_labs", __name__, template_folder="../../templates/owasp_labs")
+
+
+@owasp_labs_bp.route("/")
+def index():
+    game = Game.query.filter_by(game_type="owasp").first()
+    if game and not game.is_active:
+        flash("The OWASP Vulnerability Labs module is currently deactivated by an administrator.", "warning")
+        return redirect(url_for("dashboard.index"))
+    return redirect(url_for("owasp_labs.sql_injection_lab"))
 
 
 # ============================================================

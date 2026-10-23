@@ -38,5 +38,43 @@ class Question(db.Model):
         """Serialize a Python list to JSON for storage."""
         self.choices = json.dumps(value)
 
+    @property
+    def static_explanation(self):
+        """Alias for explanation (Data Dictionary 6.3.3)."""
+        return self.explanation or ""
+
+    @property
+    def option_a(self):
+        """Discrete option A accessor (Data Dictionary 6.3.3)."""
+        c = self.choices_list
+        return c[0] if len(c) > 0 else ""
+
+    @property
+    def option_b(self):
+        """Discrete option B accessor (Data Dictionary 6.3.3)."""
+        c = self.choices_list
+        return c[1] if len(c) > 1 else ""
+
+    @property
+    def option_c(self):
+        """Discrete option C accessor (Data Dictionary 6.3.3)."""
+        c = self.choices_list
+        return c[2] if len(c) > 2 else ""
+
+    @property
+    def option_d(self):
+        """Discrete option D accessor (Data Dictionary 6.3.3)."""
+        c = self.choices_list
+        return c[3] if len(c) > 3 else ""
+
+    @property
+    def correct_option(self):
+        """Map correct answer text to A, B, C, or D (Data Dictionary 6.3.3)."""
+        c = self.choices_list
+        for idx, opt in enumerate(c):
+            if opt.strip().lower() == (self.correct_answer or '').strip().lower():
+                return chr(ord('A') + idx)
+        return self.correct_answer or ""
+
     def __repr__(self):
         return f"<Question {self.id}: {self.module} (Tier {self.tier})>"

@@ -26,6 +26,7 @@ from app.models.badge import Badge
 from app.models.question import Question
 from app.models.phishing_example import PhishingExample
 from app.models.incident_scenario import IncidentScenario
+from app.models.game import Game
 
 
 def seed_users():
@@ -715,6 +716,146 @@ def seed_questions():
             "explanation": "k-Anonymity in HIBP means only the first 5 characters of the SHA-1 hash are sent. The server returns all matching suffixes, and matching is done locally.",
             "difficulty": 2,
         },
+        {
+            "module": "phishing",
+            "tier": 1,
+            "prompt": "What does a padlock icon in a browser address bar guarantee?",
+            "choices": json.dumps([
+                "The site is 100% trustworthy and not run by scammers",
+                "The connection between your browser and the website is encrypted",
+                "The website has been verified by the government",
+                "Your computer is completely protected from viruses"
+            ]),
+            "correct_answer": "The connection between your browser and the website is encrypted",
+            "explanation": "HTTPS encryption only secures communication in transit; phishing websites also routinely use free SSL certificates.",
+            "difficulty": 1,
+        },
+        {
+            "module": "password",
+            "tier": 1,
+            "prompt": "Why should you never use the same password on multiple online services?",
+            "choices": json.dumps([
+                "Because websites can detect identical passwords and ban you",
+                "If one service suffers a data breach, attackers will use credential stuffing on your other accounts",
+                "Because long passwords expire faster",
+                "Because browsers cannot remember duplicate passwords"
+            ]),
+            "correct_answer": "If one service suffers a data breach, attackers will use credential stuffing on your other accounts",
+            "explanation": "Credential stuffing attacks automate testing leaked username/password pairs across hundreds of top websites.",
+            "difficulty": 1,
+        },
+        {
+            "module": "social_eng",
+            "tier": 2,
+            "prompt": "An unknown caller claims your electricity will be disconnected in 30 minutes unless you pay a bill via UPI. What psychological lever are they exploiting?",
+            "choices": json.dumps([
+                "Curiosity and flattery",
+                "Artificial urgency and fear",
+                "Technical intimidation",
+                "Social proof and consensus"
+            ]),
+            "correct_answer": "Artificial urgency and fear",
+            "explanation": "Scammers fabricate tight deadlines to induce panic and force victims into hasty decisions without verifying official records.",
+            "difficulty": 2,
+        },
+        {
+            "module": "general",
+            "tier": 2,
+            "prompt": "What is the primary vulnerability prevented by implementing Multi-Factor Authentication (MFA)?",
+            "choices": json.dumps([
+                "Distributed Denial of Service (DDoS)",
+                "Unauthorized access resulting from stolen or leaked passwords",
+                "SQL Injection vulnerabilities in web applications",
+                "Hardware failures on server hard drives"
+            ]),
+            "correct_answer": "Unauthorized access resulting from stolen or leaked passwords",
+            "explanation": "Even if an attacker possesses your password, MFA requires a second distinct factor like an authenticator token or security key.",
+            "difficulty": 2,
+        },
+        {
+            "module": "sqli",
+            "tier": 3,
+            "prompt": "What is the primary and most robust defensive technique against SQL Injection?",
+            "choices": json.dumps([
+                "Blacklisting single quotes and double dashes in user input",
+                "Using Parameterized Queries (Prepared Statements) with an ORM",
+                "Encoding HTML output before sending it to the browser",
+                "Hashing inputs with MD5 before database execution"
+            ]),
+            "correct_answer": "Using Parameterized Queries (Prepared Statements) with an ORM",
+            "explanation": "Prepared statements ensure the database engine strictly treats user input as data parameters rather than executable SQL code.",
+            "difficulty": 3,
+        },
+        {
+            "module": "xss",
+            "tier": 3,
+            "prompt": "Which HTTP response header helps mitigate Cross-Site Scripting (XSS) by restricting where scripts can load from?",
+            "choices": json.dumps([
+                "Content-Security-Policy (CSP)",
+                "Access-Control-Allow-Origin",
+                "Strict-Transport-Security (HSTS)",
+                "X-Content-Type-Options"
+            ]),
+            "correct_answer": "Content-Security-Policy (CSP)",
+            "explanation": "Content-Security-Policy allows server operators to restrict dynamic script execution, inline scripts, and untrusted remote domains.",
+            "difficulty": 3,
+        },
+        {
+            "module": "general",
+            "tier": 2,
+            "prompt": "When inspecting a URL, which domain component determines the actual destination host?",
+            "choices": json.dumps([
+                "The path after the first slash (e.g., /login/bank)",
+                "The protocol prefix (https:// vs http://)",
+                "The primary registered domain and Top-Level Domain (TLD) before the port or path",
+                "The subdomain prefix (e.g., login.bank.com.attacker.org)"
+            ]),
+            "correct_answer": "The primary registered domain and Top-Level Domain (TLD) before the port or path",
+            "explanation": "In 'login.bank.com.attacker.org', the destination server is controlled by 'attacker.org', regardless of preceding subdomains.",
+            "difficulty": 2,
+        },
+        {
+            "module": "soc",
+            "tier": 3,
+            "prompt": "In the MITRE ATT&CK framework, which tactic category includes techniques used to maintain access across restarts?",
+            "choices": json.dumps([
+                "Initial Access",
+                "Persistence",
+                "Lateral Movement",
+                "Exfiltration"
+            ]),
+            "correct_answer": "Persistence",
+            "explanation": "Persistence tactics encompass scheduled tasks, registry run keys, web shells, and startup daemons that survive system reboots.",
+            "difficulty": 3,
+        },
+        {
+            "module": "social_eng",
+            "tier": 1,
+            "prompt": "You receive a message from your manager's personal WhatsApp asking for urgent gift cards for a client. What is the safest immediate action?",
+            "choices": json.dumps([
+                "Immediately buy the cards and message back the claim codes",
+                "Verify via a separate trusted channel such as official corporate Slack or phone call",
+                "Ask for their credit card details to buy the cards",
+                "Ignore your job duties entirely"
+            ]),
+            "correct_answer": "Verify via a separate trusted channel such as official corporate Slack or phone call",
+            "explanation": "Executive impersonation (Whaling) relies on informal communication channels; always confirm requests using established internal directories.",
+            "difficulty": 1,
+        },
+        {
+            "module": "general",
+            "tier": 3,
+            "prompt": "Which password hashing algorithm includes built-in resistance to custom ASIC hardware through memory-hardness?",
+            "choices": json.dumps([
+                "MD5",
+                "SHA-256",
+                "Argon2 / scrypt",
+                "DES"
+            ]),
+            "correct_answer": "Argon2 / scrypt",
+            "explanation": "Modern password hashing functions like Argon2 and scrypt require configurable RAM, making parallel GPU/ASIC attacks cost-prohibitive.",
+            "difficulty": 3,
+        },
     ]
 
     for data in questions:
@@ -722,6 +863,56 @@ def seed_questions():
             q = Question(**data)
             db.session.add(q)
             print(f"  Created question: {data['prompt'][:50]}...")
+
+    db.session.commit()
+
+
+def seed_games():
+    """Create initial game modules (Data Dictionary 6.3.2)."""
+    games_data = [
+        {
+            "game_name": "Phishing & Spoofing Simulator",
+            "game_type": "phishing",
+            "description": "Inspect suspicious email headers, spoofed links, and SMS lures in a safe simulated sandbox.",
+            "is_active": True,
+        },
+        {
+            "game_name": "Password Fortress Lab",
+            "game_type": "password",
+            "description": "Test password entropy, brute-force resistance, and verify hashes against breached datasets via HIBP k-Anonymity.",
+            "is_active": True,
+        },
+        {
+            "game_name": "Social Engineering Defense Lab",
+            "game_type": "social_eng",
+            "description": "Interactive branching conversations against urgent WhatsApp requests, fake KYC, and pretexting calls.",
+            "is_active": True,
+        },
+        {
+            "game_name": "Mastery Challenge Arena (MCQ Quiz)",
+            "game_type": "quiz",
+            "description": "30-second timed quiz with Beginner, Intermediate, and Advanced cybersecurity scenarios.",
+            "is_active": True,
+        },
+        {
+            "game_name": "OWASP Vulnerability Labs",
+            "game_type": "owasp",
+            "description": "Hands-on defensive analysis of SQL Injection, Cross-Site Scripting (XSS), and Broken Access Control.",
+            "is_active": True,
+        },
+        {
+            "game_name": "SOC Analyst / Incident Response",
+            "game_type": "soc",
+            "description": "Examine SIEM log events, investigate ransomware attacks, and map incident phases to MITRE ATT&CK.",
+            "is_active": True,
+        },
+    ]
+
+    for data in games_data:
+        if not Game.query.filter_by(game_type=data["game_type"]).first():
+            game = Game(**data)
+            db.session.add(game)
+            print(f"  Created game module: {data['game_name']}")
 
     db.session.commit()
 
@@ -735,6 +926,9 @@ def seed_all():
 
     print("\n🏆 Creating badges...")
     seed_badges()
+
+    print("\n🎮 Creating game modules...")
+    seed_games()
 
     print("\n📧 Creating phishing examples...")
     seed_phishing_examples()

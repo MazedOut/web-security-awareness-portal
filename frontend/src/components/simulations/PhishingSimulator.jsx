@@ -33,6 +33,7 @@ export const PhishingSimulator = () => {
   const [userDecision, setUserDecision] = useState(null); // 'phish' or 'safe'
   const [feedback, setFeedback] = useState(null);
   const [aiExplanation, setAiExplanation] = useState(null); // AI explanation (Items 36, 38, 42)
+  const [aiExplanationSource, setAiExplanationSource] = useState('ai');
   const [isLoadingAI, setIsLoadingAI] = useState(false);
 
   useEffect(() => {
@@ -82,11 +83,24 @@ export const PhishingSimulator = () => {
     if (!selectedItem || isLoadingAI) return;
     setIsLoadingAI(true);
     setAiExplanation(null);
+    const fallbackText = activeTab === 'email' ? selectedItem.explanation : selectedItem.advice;
     try {
       const body = activeTab === 'email'
-        ? { question: selectedItem.subject, user_answer: userDecision === 'phish' ? 'Phishing' : 'Legitimate', is_correct: feedback?.status === 'correct', difficulty: selectedItem.difficulty || 'intermediate' }
-        : { question: selectedItem.text, user_answer: userDecision === 'phish' ? 'Scam' : 'Safe', is_correct: feedback?.status === 'correct', difficulty: 'beginner' };
-      const res = await fetch('/api/ai-mentor-feedback', {
+        ? {
+            question: selectedItem.subject,
+            user_answer: userDecision === 'phish' ? 'Phishing' : 'Legitimate',
+            is_correct: feedback?.status === 'correct',
+            difficulty: selectedItem.difficulty || 'intermediate',
+            static_fallback: fallbackText || '',
+          }
+        : {
+            question: selectedItem.text,
+            user_answer: userDecision === 'phish' ? 'Scam' : 'Safe',
+            is_correct: feedback?.status === 'correct',
+            difficulty: 'beginner',
+            static_fallback: fallbackText || '',
+          };
+      const res = await fetch('/api/ai-explain', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -94,12 +108,15 @@ export const PhishingSimulator = () => {
       });
       if (res.ok) {
         const json = await res.json();
-        setAiExplanation(json.feedback || json.explanation);
+        setAiExplanation(json.explanation || json.feedback);
+        setAiExplanationSource(json.is_ai ? 'ai' : 'static_fallback');
       } else {
-        setAiExplanation(activeTab === 'email' ? selectedItem.explanation : selectedItem.advice);
+        setAiExplanation(fallbackText || 'Review the indicators above.');
+        setAiExplanationSource('static_fallback');
       }
     } catch {
-      setAiExplanation(activeTab === 'email' ? selectedItem.explanation : selectedItem.advice);
+      setAiExplanation(fallbackText || 'AI Mentor is currently offline. Review the indicators above.');
+      setAiExplanationSource('static_fallback');
     } finally {
       setIsLoadingAI(false);
     }
@@ -366,10 +383,27 @@ export const PhishingSimulator = () => {
                         className="space-y-2"
                       >
                         <div className="flex items-center gap-1.5">
-                          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-                          <span className="text-[10px] uppercase font-bold text-purple-300 tracking-wider">AI Explanation</span>
+                          {aiExplanationSource === 'ai' ? (
+                            <>
+                              <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                              <span className="text-[10px] uppercase font-bold text-purple-300 tracking-wider">
+                                AI Explanation (Gemini 2.0 Flash)
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                              <span className="text-[10px] uppercase font-bold text-amber-300 tracking-wider">
+                                Static Fallback Explanation (Offline)
+                              </span>
+                            </>
+                          )}
                         </div>
-                        <p className="text-xs text-purple-100 leading-relaxed bg-purple-900/30 border border-purple-400/20 rounded-lg p-3">
+                        <p className={`text-xs leading-relaxed rounded-lg p-3 border ${
+                          aiExplanationSource === 'ai'
+                            ? 'text-purple-100 bg-purple-900/30 border-purple-400/20'
+                            : 'text-amber-100 bg-amber-900/30 border-amber-400/20'
+                        }`}>
                           {aiExplanation}
                         </p>
                       </motion.div>

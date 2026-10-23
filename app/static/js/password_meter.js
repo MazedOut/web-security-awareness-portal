@@ -128,7 +128,22 @@
     /**
      * Trigger HIBP breach check via the API
      */
-    function checkBreach(inputId, resultId) {
+    /**
+     * Compute SHA-1 hex digest locally in browser using Web Crypto API (FR-06.1).
+     */
+    async function sha1Hex(str) {
+        if (!window.crypto || !window.crypto.subtle) return null;
+        const buffer = new TextEncoder().encode(str);
+        const hashBuffer = await window.crypto.subtle.digest("SHA-1", buffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, "0")).join("").toUpperCase();
+    }
+
+    /**
+     * Trigger HIBP breach check via k-Anonymity (FR-06.1-6.5).
+     * Only 5-character prefix is sent; suffix comparison is local.
+     */
+    async function checkBreach(inputId, resultId) {
         const input = document.getElementById(inputId);
         const resultDiv = document.getElementById(resultId);
         if (!input || !resultDiv) return;
@@ -139,38 +154,66 @@
             return;
         }
 
-        resultDiv.innerHTML = '<span class="text-muted small"><i class="bi bi-hourglass-split"></i> Checking breach databases...</span>';
+        resultDiv.innerHTML = '<span class="text-muted small"><i class="bi bi-hourglass-split"></i> Checking breach intelligence via k-Anonymity...</span>';
 
-        fetch("/api/check-password-breach", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ password: password }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.breach_count > 0) {
-                resultDiv.innerHTML =
-                    `<div class="alert alert-danger py-2 small">
-                        <i class="bi bi-exclamation-triangle-fill"></i>
-                        <strong>Warning!</strong> This password has been found in
-                        <strong>${data.breach_count.toLocaleString()}</strong> data breaches.
-                        You should never use this password.
-                    </div>`;
-            } else {
-                resultDiv.innerHTML =
-                    `<div class="alert alert-success py-2 small">
-                        <i class="bi bi-shield-check"></i>
-                        This password has <strong>not been found</strong> in any known data breaches.
-                    </div>`;
+        try {
+            const fullHash = await sha1Hex(password);
+            if (!fullHash) {
+                // Fallback to proxy endpoint if Web Crypto is unavailable
+                const res = await fetch("/api/check-password-breach", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ password: password }),
+                });
+                const data = await res.json();
+                renderBreachResult(resultDiv, data.breach_count || 0);
+                return;
             }
-        })
-        .catch(() => {
+
+            const prefix = fullHash.slice(0, 5);
+            const suffix = fullHash.slice(5);
+
+            const res = await fetch(`/api/pwned-range/${prefix}`);
+            if (!res.ok) throw new Error("Range lookup failed");
+
+            const data = await res.json();
+            const lines = (data.hashes || "").split("\n");
+            let breachCount = 0;
+
+            for (const line of lines) {
+                const parts = line.trim().split(":");
+                if (parts.length === 2 && parts[0].toUpperCase() === suffix) {
+                    breachCount = parseInt(parts[1], 10) || 0;
+                    break;
+                }
+            }
+
+            renderBreachResult(resultDiv, breachCount);
+        } catch (err) {
             resultDiv.innerHTML =
                 `<div class="alert alert-secondary py-2 small">
                     <i class="bi bi-info-circle"></i>
-                    Unable to check breach status right now. Try again later.
+                    Breach checking service is currently unavailable. Password strength analysis remains active.
                 </div>`;
-        });
+        }
+    }
+
+    function renderBreachResult(resultDiv, breachCount) {
+        if (breachCount > 0) {
+            resultDiv.innerHTML =
+                `<div class="alert alert-danger py-2 small">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <strong>Warning!</strong> This password pattern has appeared in
+                    <strong>${breachCount.toLocaleString()}</strong> data breaches.
+                    Never use this password on any account.
+                </div>`;
+        } else {
+            resultDiv.innerHTML =
+                `<div class="alert alert-success py-2 small">
+                    <i class="bi bi-shield-check"></i>
+                    Good news: This password was <strong>not found</strong> in known breach datasets.
+                </div>`;
+        }
     }
 
     // Debounce helper
@@ -203,10 +246,10 @@
             updateMeter(opts.inputId, opts.barId, opts.labelId, opts.checklistId);
         });
 
-        // Debounced breach check (800ms after user stops typing)
+        // Debounced breach check (500ms after user stops typing - FR-06.3)
         const debouncedBreach = debounce(function () {
             checkBreach(opts.inputId, opts.breachResultId);
-        }, 800);
+        }, 500);
 
         input.addEventListener("input", debouncedBreach);
     };

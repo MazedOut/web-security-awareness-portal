@@ -59,5 +59,21 @@ class PhishingExample(db.Model):
         labels = {1: "Easy", 2: "Medium", 3: "Hard"}
         return labels.get(self.difficulty, "Easy")
 
+    @property
+    def difficulty_level_name(self):
+        """Human-readable tier difficulty (Item 13)."""
+        labels = {1: "Beginner", 2: "Intermediate", 3: "Advanced"}
+        return labels.get(self.difficulty, "Beginner")
+
+    @property
+    def static_explanation(self):
+        """Static fallback explanation based on indicators or classification."""
+        flags = self.red_flags_list
+        if flags:
+            return "Key indicators: " + "; ".join(flags)
+        if self.is_phishing:
+            return "This message shows multiple indicators of phishing: deceptive sender identity, high urgency, and suspicious call-to-action."
+        return "This message comes from a verified domain and displays normal business correspondence patterns."
+
     def __repr__(self):
         return f"<PhishingExample {self.id}: '{self.subject}' ({'PHISH' if self.is_phishing else 'LEGIT'})>"

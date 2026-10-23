@@ -4,8 +4,19 @@ from flask_login import login_required, current_user
 from app.extensions import db
 from app.models.score import Score
 from app.models.incident_scenario import IncidentScenario
+from app.models.game import Game
 
 soc_analyst_bp = Blueprint('soc_analyst', __name__, template_folder='../../templates/soc_analyst')
+
+
+@soc_analyst_bp.route('/')
+def index():
+    game = Game.query.filter_by(game_type='soc').first()
+    if game and not game.is_active:
+        flash('The SOC Analyst module is currently deactivated by an administrator.', 'warning')
+        return redirect(url_for('dashboard.index'))
+    return redirect(url_for('soc_analyst.siem_log_analyzer'))
+
 
 MOCK_SIEM_LOGS = [
     {'id': 1, 'timestamp': '2026-08-22T10:00:00', 'source_ip': '192.168.1.10', 'dest_ip': '10.0.0.5', 'event_type': 'SSH_LOGIN', 'message': 'Successful SSH login for user admin', 'is_malicious': False, 'explanation': 'Normal SSH login activity.'},

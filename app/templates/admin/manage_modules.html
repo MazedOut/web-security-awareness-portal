@@ -1,0 +1,88 @@
+{% extends "layouts/base_light.html" %}
+
+{% block title %}Manage Modules - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Security Module Activation</h2>
+            <p class="text-muted mb-0">Enable or disable awareness simulations dynamically without deleting historical scores or data.</p>
+        </div>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 fw-semibold">Available Security Modules (Data Dict 6.3.2)</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 80px;">ID</th>
+                            <th>Module Name</th>
+                            <th>Category / Type</th>
+                            <th>Description</th>
+                            <th class="text-center" style="width: 130px;">Status</th>
+                            <th class="text-end" style="width: 160px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mod in modules %}
+                        <tr>
+                            <td class="text-muted small">#{{ mod.game_id }}</td>
+                            <td class="fw-bold">{{ mod.game_name }}</td>
+                            <td>
+                                <span class="badge bg-secondary text-uppercase" style="font-size: 0.7rem;">{{ mod.game_type }}</span>
+                            </td>
+                            <td class="text-muted small" style="max-width: 320px;">{{ mod.description or '—' }}</td>
+                            <td class="text-center">
+                                {% if mod.is_active %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1.5 rounded-pill">
+                                        ● Active
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2.5 py-1.5 rounded-pill">
+                                        ○ Disabled
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <form action="{{ url_for('admin.toggle_module', game_id=mod.game_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Change activation state for {{ mod.game_name }}?');">
+                                    {% if mod.is_active %}
+                                        <button type="submit" class="btn btn-sm btn-outline-warning">
+                                            Disable Module
+                                        </button>
+                                    {% else %}
+                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                            Enable Module
+                                        </button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No modules found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

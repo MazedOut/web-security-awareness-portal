@@ -63,5 +63,56 @@
             </div>
         </div>
     </div>
+
+    <!-- Per-Question Analytics (FR-04.3, Item 49) -->
+    <div class="card shadow-sm mt-5">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 fw-semibold">Question Accuracy & Performance Metrics</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 70px;">ID</th>
+                            <th>Question Prompt</th>
+                            <th>Module</th>
+                            <th class="text-center">Difficulty</th>
+                            <th class="text-center">Attempts</th>
+                            <th class="text-center">Success Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in question_metrics %}
+                        <tr>
+                            <td class="text-muted small">#{{ m.question.id }}</td>
+                            <td class="small fw-medium" style="max-width: 400px;">{{ m.question.prompt }}</td>
+                            <td><span class="badge bg-secondary text-uppercase" style="font-size: 0.65rem;">{{ m.question.module }}</span></td>
+                            <td class="text-center">
+                                {% if m.question.difficulty == 1 %}
+                                    <span class="badge bg-success-subtle text-success">Beginner</span>
+                                {% elif m.question.difficulty == 2 %}
+                                    <span class="badge bg-warning-subtle text-warning">Intermediate</span>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger">Advanced</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center small">{{ m.total }}</td>
+                            <td class="text-center">
+                                <span class="badge {% if m.pct >= 70 %}bg-success{% elif m.pct >= 40 %}bg-warning text-dark{% else %}bg-secondary{% endif %} rounded-pill">
+                                    {{ m.pct }}%
+                                </span>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No question analytics data available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

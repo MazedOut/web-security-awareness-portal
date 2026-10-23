@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { 
   KeyRound, 
@@ -12,7 +12,9 @@ import {
   Eye, 
   EyeOff, 
   AlertTriangle,
-  Zap
+  Zap,
+  Info,
+  Loader2
 } from 'lucide-react';
 import { GlassCard } from '../common/GlassCard';
 import { AnimatedButton } from '../common/AnimatedButton';
@@ -30,6 +32,48 @@ export const PasswordLab = () => {
   const [breachResult, setBreachResult] = useState(null);
   const [isCheckingBreach, setIsCheckingBreach] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showBreachInfo, setShowBreachInfo] = useState(false);
+  const abortControllerRef = useRef(null);
+
+  // 500ms Debounced breach check (FR-06.3) with request cancellation
+  useEffect(() => {
+    if (!password || password.trim().length === 0) {
+      setBreachResult(null);
+      setIsCheckingBreach(false);
+      return;
+    }
+
+    // Cancel any in-flight request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    setIsCheckingBreach(true);
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await simulationService.checkPasswordBreach(password, controller.signal);
+        setBreachResult(res);
+      } catch (err) {
+        if (err?.name !== 'CanceledError' && err?.name !== 'AbortError') {
+          setBreachResult({
+            breach_count: 0,
+            service_unavailable: true,
+            message: 'Breach check service temporarily unavailable. Strength meter remains fully operational.'
+          });
+        }
+      } finally {
+        setIsCheckingBreach(false);
+      }
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [password]);
 
   // Entropy Calculation logic
   const calculateEntropy = (pwd) => {
@@ -217,33 +261,78 @@ export const PasswordLab = () => {
               </div>
             </div>
 
-            {/* Breach Lookup Button */}
+            {/* Educational Tooltip: What is a Data Breach? (Item 16, UC-03 step 7) */}
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => setShowBreachInfo(!showBreachInfo)}
+                className="flex items-center gap-1.5 text-xs text-amber-400/90 hover:text-amber-300 transition-colors font-medium"
+              >
+                <Info className="w-3.5 h-3.5" />
+                <span>{showBreachInfo ? 'Hide Breach Intel Guide' : 'What is a Data Breach? (Learn More)'}</span>
+              </button>
+
+              {showBreachInfo && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="mt-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200/90 space-y-1.5"
+                >
+                  <p className="font-semibold text-amber-300">
+                    {lang === 'hi' ? 'डेटा ब्रीच क्या है?' : 'What is a Data Breach?'}
+                  </p>
+                  <p className="leading-relaxed text-[11px] text-slate-300">
+                    A data breach occurs when an unauthorized attacker steals internal databases from online companies.
+                    Stolen credentials are published on dark web forums and compiled into billions of records. Attackers use automated tools to test these passwords across email, banking, and social accounts in <strong>credential stuffing</strong> attacks.
+                  </p>
+                  <p className="text-[10px] text-amber-400 font-mono">
+                    Privacy Guarantee: k-Anonymity ensures only 5 characters of your password's SHA-1 hash leave your device.
+                  </p>
+                </motion.div>
+              )}
+            </div>
+
+            {/* Breach Lookup Status & Manual Trigger */}
             <div className="pt-2">
               <AnimatedButton
                 variant="purple"
                 size="md"
                 className="w-full"
-                icon={Search}
+                icon={isCheckingBreach ? Loader2 : Search}
                 disabled={!password || isCheckingBreach}
                 onClick={handleBreachCheck}
               >
-                {isCheckingBreach ? 'Checking Data Breach Dumps...' : 'Check if Leaked in Known Data Breaches'}
+                {isCheckingBreach
+                  ? (lang === 'hi' ? 'डेटाबेस में जांच हो रही है...' : 'Checking Breach Databases (k-Anonymity)...')
+                  : (lang === 'hi' ? 'डेटा ब्रीच में जांचें' : 'Check if Leaked in Known Data Breaches')}
               </AnimatedButton>
             </div>
 
+            {/* Loading Indicator */}
+            {isCheckingBreach && (
+              <div className="flex items-center justify-center gap-2 py-2 text-xs text-purple-300">
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>Querying k-Anonymity range hash buckets (500ms debounce active)...</span>
+              </div>
+            )}
+
             {/* Breach Result Display */}
-            {breachResult && (
+            {breachResult && !isCheckingBreach && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className={`p-4 rounded-xl border ${
-                  breachResult.breach_count > 0
+                  breachResult.service_unavailable
+                    ? 'bg-slate-900/80 border-slate-700 text-slate-300'
+                    : breachResult.breach_count > 0
                     ? 'bg-rose-950/40 border-rose-500/40 text-rose-200'
                     : 'bg-emerald-950/40 border-emerald-500/40 text-emerald-200'
                 }`}
               >
                 <div className="flex items-start gap-2.5">
-                  {breachResult.breach_count > 0 ? (
+                  {breachResult.service_unavailable ? (
+                    <Info className="w-5 h-5 text-slate-400 shrink-0 mt-0.5" />
+                  ) : breachResult.breach_count > 0 ? (
                     <AlertTriangle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
                   ) : (
                     <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
@@ -253,6 +342,11 @@ export const PasswordLab = () => {
                     {breachResult.breach_count > 0 && (
                       <p className="text-[11px] text-rose-300">
                         Recommendation: Never use this password anywhere. Attackers have automated botnets trying this combination.
+                      </p>
+                    )}
+                    {breachResult.service_unavailable && (
+                      <p className="text-[10px] text-slate-400">
+                        Offline Fallback: Password entropy and local dictionary rules continue to protect you.
                       </p>
                     )}
                   </div>

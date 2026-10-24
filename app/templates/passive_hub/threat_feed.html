@@ -4,9 +4,71 @@
 
 {% block content %}
 <div class="container py-5">
-    <div class="mb-5">
-        <h2 class="fw-bold">Indian Cyber Threat Feed</h2>
-        <p class="lead text-muted">Latest trending cyber scams and threats targeting Indian users.</p>
+    <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h2 class="fw-bold mb-1">Live Cybersecurity Threat Feed & Advisories</h2>
+            <p class="lead text-muted mb-0">Genuine current threat telemetry aggregated from CISA KEV, NVD CVE, and global cybersecurity intelligence feeds.</p>
+        </div>
+        {% if last_sync %}
+        <div>
+            <span class="badge bg-dark px-3 py-2 text-white"><i class="bi bi-clock-history me-1"></i> Synchronized: {{ last_sync[:19].replace('T', ' ') }} UTC</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Live Telemetry Section -->
+    {% if feed and feed|length > 0 %}
+    <div class="row g-4 mb-5">
+        {% for item in feed %}
+        <div class="col-12">
+            <div class="card shadow-sm border-0 border-start {% if item.severity == 'Critical' %}border-danger{% elif item.severity == 'High' %}border-warning{% elif item.severity == 'Medium' %}border-info{% else %}border-secondary{% endif %} border-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <h5 class="card-title mb-0 fw-bold">{{ item.title }}</h5>
+                            {% if item.is_actively_exploited %}
+                            <span class="badge bg-danger"><i class="bi bi-fire me-1"></i> Actively Exploited</span>
+                            {% endif %}
+                            {% if item.cve_id %}
+                            <span class="badge bg-dark font-monospace">{{ item.cve_id }}</span>
+                            {% endif %}
+                            <span class="badge bg-light text-dark border">{{ item.category }}</span>
+                        </div>
+                        <span class="badge {% if item.severity == 'Critical' %}bg-danger{% elif item.severity == 'High' %}bg-warning text-dark{% elif item.severity == 'Medium' %}bg-info text-dark{% else %}bg-secondary{% endif %}">
+                            {{ item.severity }}
+                        </span>
+                    </div>
+                    
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-building me-1"></i> Source: <strong>{{ item.source_name }}</strong> &nbsp;|&nbsp; 
+                        <i class="bi bi-calendar3 me-1"></i> Published: {{ item.published_at[:10] }}
+                        {% if item.vendor %}&nbsp;|&nbsp; Vendor: {{ item.vendor }}{% endif %}
+                        {% if item.product %}&nbsp;|&nbsp; Product: {{ item.product }}{% endif %}
+                    </p>
+                    
+                    <p class="card-text mb-2">{{ item.summary }}</p>
+                    
+                    {% if item.required_action %}
+                    <p class="mb-2 text-primary small"><strong>Required Action:</strong> {{ item.required_action }}</p>
+                    {% endif %}
+                    
+                    {% if item.source_url %}
+                    <div class="mt-2">
+                        <a href="{{ item.source_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-box-arrow-up-right me-1"></i> View Official Source Report
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="mb-4">
+        <h3 class="fw-bold">Common Indian Cybercrime Incident Patterns (Educational Reference)</h3>
+        <p class="text-muted">Standard incident blueprints and emergency guidance for citizens.</p>
     </div>
 
     <div class="row g-4">

@@ -32,8 +32,15 @@ def helplines():
 
 @passive_hub_bp.route("/threat-feed")
 def threat_feed():
-    """Indian cyber threat summaries and CERT-In advisories."""
-    return render_template("threat_feed.html")
+    """Live cyber threat feed and verified security advisories."""
+    from app.services.threat_feed_service import threat_feed_service
+    feed_data = threat_feed_service.get_feed(per_page=20)
+    return render_template(
+        "threat_feed.html",
+        feed=feed_data.get("items", []),
+        last_sync=feed_data.get("last_sync"),
+        source_statuses=feed_data.get("source_statuses", {}),
+    )
 
 
 @passive_hub_bp.route("/legal-reference")

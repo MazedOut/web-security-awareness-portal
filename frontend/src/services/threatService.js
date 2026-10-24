@@ -18,5 +18,24 @@ export const threatService = {
     } catch (e) {
       return mockThreats.find(t => t.id === id) || null;
     }
+  },
+
+  getLiveFeed: async (params = {}) => {
+    try {
+      const query = new URLSearchParams(params).toString();
+      const res = await apiClient.get(`/api/threat-feed?${query}`);
+      return res.data;
+    } catch (e) {
+      return null;
+    }
+  },
+
+  refreshLiveFeed: async () => {
+    try {
+      const res = await apiClient.post('/api/threat-feed/refresh');
+      return res.data;
+    } catch (e) {
+      return null;
+    }
   }
 };

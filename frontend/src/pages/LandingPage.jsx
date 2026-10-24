@@ -123,8 +123,8 @@ export const LandingPage = () => {
                 : '1 Cyber attack every 39 seconds worldwide. Over 14,000+ fraud alerts processed via 1930 today.'}
             </span>
           </div>
-          <Link to="/statistics" className="text-cyber-red hover:underline font-bold shrink-0 text-[11px] flex items-center gap-1">
-            View Stats <ArrowRight className="w-3 h-3" />
+          <Link to="/threat-feed" className="text-cyber-red hover:underline font-bold shrink-0 text-[11px] flex items-center gap-1">
+            Live Feed <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
       </motion.div>

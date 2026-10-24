@@ -18,6 +18,10 @@ class Config:
 
     GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
     HIBP_API_KEY = os.environ.get("HIBP_API_KEY")
+    NVD_API_KEY = os.environ.get("NVD_API_KEY")
+    THREAT_FEED_CACHE_TTL = int(os.environ.get("THREAT_FEED_CACHE_TTL", 600))
+    THREAT_FEED_REFRESH_COOLDOWN = int(os.environ.get("THREAT_FEED_REFRESH_COOLDOWN", 60))
+    THREAT_FEED_TIMEOUT = int(os.environ.get("THREAT_FEED_TIMEOUT", 10))
 
 
 class DevelopmentConfig(Config):

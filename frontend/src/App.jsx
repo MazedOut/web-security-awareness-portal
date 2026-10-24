@@ -92,6 +92,8 @@ function AppContent() {
               <Route path="/auth" element={<PageTransition><AuthPage /></PageTransition>} />
               <Route path="/login" element={<PageTransition><AuthPage /></PageTransition>} />
               <Route path="/articles" element={<PageTransition><AwarenessHubPage /></PageTransition>} />
+              <Route path="/threat-feed" element={<PageTransition><AwarenessHubPage initialTab="insights" /></PageTransition>} />
+              <Route path="/live-feed" element={<PageTransition><AwarenessHubPage initialTab="insights" /></PageTransition>} />
               <Route path="/articles/:id" element={<PageTransition><ArticleDetailPage /></PageTransition>} />
               <Route path="/videos" element={<PageTransition><VideoHubPage /></PageTransition>} />
               <Route path="/threats" element={<PageTransition><ThreatIntelPage /></PageTransition>} />

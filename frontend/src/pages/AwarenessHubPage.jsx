@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { 
   BookOpen, 
   Search, 
@@ -20,14 +20,27 @@ import { useAuth } from '../context/AuthContext';
 import { articleService } from '../services/articleService';
 import { SecurityInsightsFeed } from '../components/awareness/SecurityInsightsFeed';
 
-export const AwarenessHubPage = () => {
+export const AwarenessHubPage = ({ initialTab = 'insights' }) => {
   const { lang, t } = useLanguage();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [articles, setArticles] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('insights'); // Default to insights feed as it's the new feature
+  
+  const tabParam = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState(
+    tabParam === 'articles' ? 'articles' : tabParam === 'feed' || tabParam === 'insights' ? 'insights' : initialTab
+  );
+
+  useEffect(() => {
+    if (tabParam === 'articles') {
+      setActiveTab('articles');
+    } else if (tabParam === 'feed' || tabParam === 'insights') {
+      setActiveTab('insights');
+    }
+  }, [tabParam]);
 
   useEffect(() => {
     articleService.getAllArticles().then(setArticles);
@@ -119,7 +132,24 @@ export const AwarenessHubPage = () => {
       {/* Content Tabs */}
       <div className="flex items-center gap-4 border-b border-slate-200 pb-4">
         <button
-          onClick={() => setActiveTab('articles')}
+          onClick={() => {
+            setActiveTab('insights');
+            setSearchParams({ tab: 'feed' });
+          }}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all shadow-sm ${
+            activeTab === 'insights'
+              ? 'bg-cyber-green text-white border-cyber-green/20'
+              : 'text-slate-500 hover:text-cyber-green-dark hover:bg-slate-50 border border-transparent'
+          }`}
+        >
+          <Flame className="w-4 h-4" />
+          {lang === 'hi' ? 'लाइव साइबर थ्रेट फीड' : 'Live Threat Feed'}
+        </button>
+        <button
+          onClick={() => {
+            setActiveTab('articles');
+            setSearchParams({ tab: 'articles' });
+          }}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all shadow-sm ${
             activeTab === 'articles'
               ? 'bg-cyber-gold text-white border-cyber-gold/20'
@@ -128,17 +158,6 @@ export const AwarenessHubPage = () => {
         >
           <BookOpen className="w-4 h-4" />
           {lang === 'hi' ? 'बुनियादी लेख' : 'Core Articles'}
-        </button>
-        <button
-          onClick={() => setActiveTab('insights')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all shadow-sm ${
-            activeTab === 'insights'
-              ? 'bg-cyber-green text-white border-cyber-green/20'
-              : 'text-slate-500 hover:text-cyber-green-dark hover:bg-slate-50 border border-transparent'
-          }`}
-        >
-          <Flame className="w-4 h-4" />
-          {lang === 'hi' ? 'लाइव साइबर न्यूज़' : 'Live Cyber Feed'}
         </button>
       </div>
 

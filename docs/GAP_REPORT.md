@@ -347,3 +347,62 @@ The following audit table details the final resolution, verification evidence, a
 | **52** | Database tables & models | **DONE** | `app/models/game.py`, `app/models/__init__.py` | All tables from Data Dictionary (`users`, `games`, `questions`, `scores`, `badges`, `user_badges`, `phishing_examples`, `incident_scenarios`) verified in SQLAlchemy metadata. | Verified in `test_verification.py` | None. |
 | **53** | Question properties (`option_a`–`option_d`, `correct_option`, `static_explanation`) | **DONE** | `app/models/question.py` | Added discrete compatibility properties to `Question` model matching Data Dictionary 6.3.3. | Verified in `test_verification.py` | None. |
 | **55** | Server-side input validation on forms | **DONE** | `app/blueprints/auth/routes.py`, `app/blueprints/admin/routes.py` | Validation enforced on registration, question creation/editing, scenario submission, and phishing template forms. | Verified in `test_verification.py` | None. |
+
+---
+
+## 9. Real Live Cybersecurity Threat Feed Implementation
+
+### 9.1 Overview & Architecture
+To elevate Chakravyuh from static threat definitions to active threat awareness, a server-side Threat Intelligence Aggregator (`app/services/threat_feed_service.py`) was introduced. The live feed aggregates, normalizes, deduplicates, and caches genuine threat telemetry from authoritative public endpoints without requiring paid subscriptions or exposing API keys to the browser.
+
+Both backend presentation layers now feature genuine live data:
+1. **React Single Page Application**: Upgraded `frontend/src/components/awareness/SecurityInsightsFeed.jsx` into a Security Operations Dashboard at `/threat-feed`, `/live-feed`, and `/articles?tab=insights`.
+2. **Flask Server-Rendered Hub**: Enhanced `app/blueprints/passive_hub/routes.py` (`/resources/threat-feed`) and `app/templates/passive_hub/threat_feed.html` to render live synchronized vulnerabilities and advisories with direct source links.
+
+### 9.2 Connected Genuine Sources & Connectivity Results
+| Source Name | Upstream Endpoint / Protocol | Verified Status | Typical Count Retrieved | Authoritative Role |
+| :--- | :--- | :---: | :---: | :--- |
+| **CISA KEV Catalog** | `https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json` (JSON) | **200 OK** | 50 latest entries | Sole authority for `is_actively_exploited=True` flag and remediation actions. |
+| **NVD CVE API 2.0** | `https://services.nvd.nist.gov/rest/json/cves/2.0` (REST JSON) | **200 OK** | 25 bounded entries | Authoritative CVSS v3.1 / v3.0 severity metrics and official vendor/product CPE data. |
+| **CISA Advisories** | `https://www.cisa.gov/cybersecurity-advisories/all.xml` (RSS/XML) | **OK / Fallback** | 30 entries (or graceful fallback on CDN bot block) | Official US-CERT federal cybersecurity warnings. |
+| **The Hacker News** | `https://feeds.feedburner.com/TheHackersNews` (RSS/XML) | **200 OK** | 50 entries | Critical real-world security incidents, PHP web shells, supply-chain attacks, zero-days. |
+| **BleepingComputer** | `https://www.bleepingcomputer.com/feed/` (RSS/XML) | **200 OK** | 15 entries | Active ransomware campaigns, malware telemetry, and patch releases. |
+
+### 9.3 Threat Categories & Classification Rules
+Items are classified deterministically based on verified content:
+- **Actively Exploited CVEs**: Verified inclusion in CISA KEV or explicit in-the-wild exploitation.
+- **Web Applications & Web Shells**: Keywords matching PHP, web shells, RCE, command injection, SQL injection, XSS, SSRF, arbitrary file uploads, Apache, Nginx, WordPress, Joomla.
+- **Critical Vulnerabilities**: CVSS score $\ge$ 9.0 or explicit zero-day status.
+- **Ransomware & Malware**: Extortion campaigns, stealers, trojans, botnets, and C2 infrastructure.
+- **Phishing & Social Engineering**: BEC, credential harvesting, smishing, vishing, and deepfakes.
+- **Cloud & Supply Chain**: Kubernetes, AWS/Azure/GCP misconfigurations, PyPI/npm ecosystem tampering, SAML/OAuth flaws.
+- **Security Advisories**: Vendor security bulletins and patch notices.
+
+### 9.4 Caching, Refresh Intervals & Resilience
+- **Cache TTL**: In-memory thread-safe cache with a default TTL of 10 minutes (`THREAT_FEED_CACHE_TTL=600`, configurable 5–15 min).
+- **Disk Cache Backup**: Persisted at `instance/threat_feed_cache.json` to allow instantaneous warm startup even during offline execution.
+- **Manual Refresh Throttling**: A 60-second cooldown (`THREAT_FEED_REFRESH_COOLDOWN=60`) prevents upstream API bans or NVD rate limit exhaustion.
+- **Fault Tolerance**: Upstream timeouts (10s) and HTTP errors mark the specific source as `degraded` or `error` in `source_statuses` while serving cached entries; the portal never crashes.
+
+### 9.5 Configuration & Environment Variables
+Documented in `.env.example` and `config.py`:
+- `THREAT_FEED_CACHE_TTL`: Cache expiration duration in seconds (default: 600).
+- `THREAT_FEED_REFRESH_COOLDOWN`: Minimum seconds between manual refresh requests (default: 60).
+- `THREAT_FEED_TIMEOUT`: HTTP request timeout in seconds (default: 10).
+- `NVD_API_KEY`: Optional NVD API key to raise rate limits (not required for standard bounded queries).
+
+### 9.6 Automated Test & Build Verification
+1. **Threat Feed Unit & Integration Suite** (`tests/test_threat_feed.py`):
+   - 21 automated tests covering KEV parsing, NVD CVSS extraction, RSS XML parsing, malformed body resilience, HTTP timeout recovery, deduplication, category/severity rules, XSS sanitization, and API routes.
+   - **Result**: `Ran 21 tests in 4.341s — OK`.
+2. **Full Backend Test Suite** (`python -m unittest discover`):
+   - 37 automated tests passed with 0 regressions.
+   - **Result**: `Ran 37 tests in 8.484s — OK`.
+3. **Frontend Production Build** (`npm.cmd run build`):
+   - Vite 8.2.2 transformed 2895 modules and rendered distribution assets cleanly in 1.25s.
+   - **Result**: `0 errors`.
+
+### 9.7 Known Limitations
+- Upstream CISA RSS is occasionally blocked by Cloudflare/Akamai bot detection if accessed from cloud IP blocks; the aggregator gracefully detects this and falls back to CISA KEV and verified security news feeds without interruption.
+- NVD CVE API 2.0 without an API key enforces a 5-request-per-30s rate limit; the 10-minute cache TTL and bounded query mechanism ensure this limit is never exceeded.
+

@@ -6,6 +6,7 @@ from app.models.score import Score
 from app.models.game import Game
 from app.services.gemini_service import get_ai_feedback, get_ai_feedback_with_source
 from app.services.hibp_service import check_password_breach, query_pwned_range
+from app.services.threat_feed_service import threat_feed_service
 
 api_bp = Blueprint('api', __name__, template_folder='../../templates/api')
 
@@ -187,3 +188,58 @@ def progress_update():
         'level': current_user.level,
         'message': 'Progress updated successfully'
     })
+
+
+# ---------------------------------------------------------------------------
+# Live Cybersecurity Threat Intelligence Feed
+# ---------------------------------------------------------------------------
+
+@api_bp.route('/threats/live', methods=['GET'])
+@api_bp.route('/threat-feed', methods=['GET'])
+def get_live_threat_feed():
+    """
+    Return normalized, deduplicated live cybersecurity threat feed items
+    aggregated from CISA KEV, NVD CVE, CISA Advisories, and security feeds.
+    Supports filtering by search query, category, severity, type,
+    actively_exploited status, sorting, and pagination.
+    """
+    search = request.args.get('search', '').strip() or None
+    category = request.args.get('category', '').strip() or None
+    severity = request.args.get('severity', '').strip() or None
+    item_type = request.args.get('type', '').strip() or None
+    actively_exploited = request.args.get('actively_exploited', '').lower() in ('true', '1', 'yes')
+    sort_by = request.args.get('sort', 'newest').strip().lower()
+
+    try:
+        page = max(1, int(request.args.get('page', 1)))
+    except ValueError:
+        page = 1
+
+    try:
+        per_page = min(100, max(1, int(request.args.get('per_page', 12))))
+    except ValueError:
+        per_page = 12
+
+    feed_data = threat_feed_service.get_feed(
+        search=search,
+        category=category,
+        severity=severity,
+        item_type=item_type,
+        actively_exploited_only=actively_exploited,
+        sort_by=sort_by,
+        page=page,
+        per_page=per_page,
+    )
+    return jsonify(feed_data)
+
+
+@api_bp.route('/threats/refresh', methods=['POST'])
+@api_bp.route('/threat-feed/refresh', methods=['POST'])
+def refresh_threat_feed():
+    """
+    Manually trigger a server-side refresh of the threat feed.
+    Enforces rate throttling (60-second cooldown) to avoid upstream API bans.
+    """
+    feed_data = threat_feed_service.get_feed(force_refresh=True)
+    return jsonify(feed_data)
+

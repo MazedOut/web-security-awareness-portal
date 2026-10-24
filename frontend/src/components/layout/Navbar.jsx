@@ -49,7 +49,8 @@ export const Navbar = () => {
       name: t.nav.awarenessHub || 'Awareness',
       isLink: false,
       children: [
-        { name: 'Articles', path: '/articles' },
+        { name: 'Live Threat Feed ⚡', path: '/threat-feed' },
+        { name: 'Articles', path: '/articles?tab=articles' },
         { name: 'Videos', path: '/videos' },
         { name: 'Threat Library', path: '/threats' },
         { name: 'Safety Tips', path: '/safety-tips' },
@@ -70,6 +71,7 @@ export const Navbar = () => {
       name: t.nav.insights || 'Insights',
       isLink: false,
       children: [
+        { name: 'Live Threat Feed ⚡', path: '/threat-feed' },
         { name: 'Statistics', path: '/statistics' },
         { name: 'Threat Trends', path: '/trends' },
         { name: 'Network Awareness Map', path: '/network-lab' },

@@ -20,9 +20,9 @@ const MOCK_LEADERS = [
 ];
 
 const TIER_COLORS = {
-  3: 'text-amber-400',
-  2: 'text-cyan-400',
-  1: 'text-slate-400',
+  3: 'text-amber-700 font-bold',
+  2: 'text-blue-700 font-bold',
+  1: 'text-slate-600 font-bold',
 };
 
 const RANK_ICONS = {
@@ -62,34 +62,30 @@ export const LeaderboardPage = () => {
   return (
     <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-8">
       {/* Page Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center space-y-3"
-      >
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-widest">
-          <Trophy className="w-4 h-4" />
+      <GlassCard variant="default" className="text-center p-6 sm:p-8 space-y-3 bg-white border border-slate-200 shadow-sm rounded-2xl">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-700 text-xs font-bold uppercase tracking-widest">
+          <Trophy className="w-4 h-4 text-amber-600" />
           {lang === 'hi' ? 'साइबर सुरक्षा चैम्पियनशिप' : 'Cyber Security Championship'}
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold font-display text-white">
+        <h1 className="text-3xl sm:text-4xl font-extrabold font-display text-slate-900">
           {lang === 'hi' ? 'चक्रव्यूह लीडरबोर्ड' : 'Chakravyuh Leaderboard'}
         </h1>
-        <p className="text-slate-400 text-sm max-w-xl mx-auto">
+        <p className="text-slate-600 text-sm max-w-xl mx-auto font-medium">
           {lang === 'hi'
             ? 'शीर्ष 10 साइबर योद्धाओं की रैंकिंग — उनके XP और सुरक्षा जागरूकता स्कोर के आधार पर।'
             : 'Top 10 Cyber Defenders ranked by XP and cumulative awareness score.'}
         </p>
-      </motion.div>
+      </GlassCard>
 
       {isLoading ? (
-        <div className="text-center py-20 text-slate-400">
-          <Shield className="w-10 h-10 mx-auto mb-3 animate-pulse" />
+        <div className="text-center py-20 text-slate-500 font-medium">
+          <Shield className="w-10 h-10 mx-auto mb-3 animate-pulse text-slate-400" />
           <p className="text-sm">Loading leaderboard...</p>
         </div>
       ) : (
         <>
           {/* Podium — Top 3 */}
-          <div className="flex items-end justify-center gap-4 sm:gap-6 pt-4">
+          <div className="flex items-end justify-center gap-4 sm:gap-6 pt-2">
             {/* 2nd place */}
             {top3[1] && (
               <motion.div
@@ -98,15 +94,15 @@ export const LeaderboardPage = () => {
                 transition={{ delay: 0.1 }}
                 className="flex flex-col items-center gap-2"
               >
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-slate-400/10 border-2 border-slate-300/40 flex items-center justify-center text-2xl sm:text-3xl font-black text-slate-300">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-slate-200 border-2 border-slate-400 flex items-center justify-center text-2xl sm:text-3xl font-black text-slate-800 shadow-md">
                   2
                 </div>
-                <div className="text-center">
-                  <p className="font-bold text-white text-xs sm:text-sm truncate max-w-[90px]">{top3[1].name}</p>
-                  <Badge variant="silver" size="sm">{top3[1].xp} XP</Badge>
+                <div className="text-center bg-white px-3.5 py-2 rounded-2xl border border-slate-200 shadow-md min-w-[100px]">
+                  <p className="font-extrabold text-slate-900 text-xs sm:text-sm truncate">{top3[1].name}</p>
+                  <Badge variant="blue" size="sm" className="mt-1">{top3[1].xp} XP</Badge>
                 </div>
-                <div className="w-20 sm:w-24 h-16 bg-slate-400/20 border border-slate-300/20 rounded-t-xl flex items-center justify-center">
-                  <Medal className="w-6 h-6 text-slate-300" />
+                <div className="w-20 sm:w-24 h-16 bg-slate-200/90 border border-slate-300 rounded-t-2xl flex items-center justify-center shadow-inner">
+                  <Medal className="w-6 h-6 text-slate-700" />
                 </div>
               </motion.div>
             )}
@@ -118,15 +114,15 @@ export const LeaderboardPage = () => {
                 transition={{ delay: 0 }}
                 className="flex flex-col items-center gap-2"
               >
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-amber-500/15 border-2 border-amber-400/60 flex items-center justify-center text-3xl sm:text-4xl font-black text-amber-400 shadow-lg shadow-amber-500/10">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-amber-100 border-2 border-amber-400 flex items-center justify-center text-3xl sm:text-4xl font-black text-amber-800 shadow-xl">
                   1
                 </div>
-                <div className="text-center">
-                  <p className="font-bold text-white text-sm truncate max-w-[100px]">{top3[0].name}</p>
-                  <Badge variant="gold" size="sm">{top3[0].xp} XP</Badge>
+                <div className="text-center bg-white px-4 py-2.5 rounded-2xl border border-amber-300 shadow-md min-w-[110px]">
+                  <p className="font-extrabold text-slate-900 text-sm truncate">{top3[0].name}</p>
+                  <Badge variant="gold" size="sm" className="mt-1">{top3[0].xp} XP</Badge>
                 </div>
-                <div className="w-24 sm:w-28 h-24 bg-amber-500/15 border border-amber-400/30 rounded-t-xl flex items-center justify-center">
-                  <Crown className="w-8 h-8 text-amber-400" />
+                <div className="w-24 sm:w-28 h-24 bg-amber-100/90 border border-amber-300 rounded-t-2xl flex items-center justify-center shadow-inner">
+                  <Crown className="w-8 h-8 text-amber-600" />
                 </div>
               </motion.div>
             )}
@@ -138,52 +134,52 @@ export const LeaderboardPage = () => {
                 transition={{ delay: 0.2 }}
                 className="flex flex-col items-center gap-2"
               >
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-amber-700/10 border-2 border-amber-700/40 flex items-center justify-center text-xl sm:text-2xl font-black text-amber-600">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-amber-50 border-2 border-amber-500 flex items-center justify-center text-xl sm:text-2xl font-black text-amber-900 shadow-md">
                   3
                 </div>
-                <div className="text-center">
-                  <p className="font-bold text-white text-xs truncate max-w-[80px]">{top3[2].name}</p>
-                  <Badge variant="orange" size="sm">{top3[2].xp} XP</Badge>
+                <div className="text-center bg-white px-3 py-2 rounded-2xl border border-slate-200 shadow-md min-w-[90px]">
+                  <p className="font-extrabold text-slate-900 text-xs truncate">{top3[2].name}</p>
+                  <Badge variant="purple" size="sm" className="mt-1">{top3[2].xp} XP</Badge>
                 </div>
-                <div className="w-16 sm:w-20 h-10 bg-amber-700/15 border border-amber-700/20 rounded-t-xl flex items-center justify-center">
-                  <Medal className="w-5 h-5 text-amber-600" />
+                <div className="w-16 sm:w-20 h-10 bg-amber-50 border border-amber-200 rounded-t-2xl flex items-center justify-center shadow-inner">
+                  <Medal className="w-5 h-5 text-amber-700" />
                 </div>
               </motion.div>
             )}
           </div>
 
           {/* Ranks 4–10 */}
-          <GlassCard variant="default" className="overflow-hidden bg-white/5 border border-white/10">
-            <div className="divide-y divide-white/5">
+          <GlassCard variant="default" className="overflow-hidden bg-white border border-slate-200 shadow-sm rounded-2xl p-0">
+            <div className="divide-y divide-slate-100">
               {rest.map((player, idx) => (
                 <motion.div
                   key={player.rank}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.05 }}
-                  className="flex items-center gap-4 p-4 hover:bg-white/5 transition-colors"
+                  className="flex items-center gap-4 p-4 hover:bg-slate-50 transition-colors"
                 >
-                  <span className="w-8 text-center font-bold text-slate-400 text-sm">
+                  <span className="w-8 text-center font-bold text-slate-600 text-sm">
                     #{player.rank}
                   </span>
 
-                  <div className="w-10 h-10 rounded-xl bg-slate-800 border border-white/10 flex items-center justify-center text-lg font-black text-slate-300">
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-lg font-black text-slate-800">
                     {player.name.charAt(0)}
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-white text-sm truncate">{player.name}</p>
-                    <p className={`text-xs font-semibold ${TIER_COLORS[player.tier]}`}>
+                    <p className="font-bold text-slate-900 text-sm truncate">{player.name}</p>
+                    <p className={`text-xs ${TIER_COLORS[player.tier]}`}>
                       {player.badge}
                     </p>
                   </div>
 
                   <div className="text-right shrink-0">
-                    <div className="flex items-center gap-1 text-amber-400 font-bold text-sm">
+                    <div className="flex items-center gap-1 text-amber-600 font-bold text-sm">
                       <Zap className="w-3.5 h-3.5" />
                       {player.xp.toLocaleString()} XP
                     </div>
-                    <p className="text-[10px] text-slate-400">Lv. {player.level}</p>
+                    <p className="text-[11px] text-slate-500 font-medium">Lv. {player.level}</p>
                   </div>
                 </motion.div>
               ))}
